@@ -7,3 +7,6 @@ app = FastAPI(
     summary="This API allows users to create and manage carpooling rides, view available rides, and join existing rides."
 )
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
