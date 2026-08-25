@@ -18,6 +18,6 @@ class Vehicle(DeclarativeBase):
 
     colour = mapped_column(String(100),nullable=False)
 
-    capacity = mapped_column(String(100), nullable=False)
+    capacity = mapped_column(Integer, nullable=False)
 
     plate_number = mapped_column(String(100), nullable=False)
