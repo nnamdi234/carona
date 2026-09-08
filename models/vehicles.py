@@ -1,17 +1,8 @@
-from sqlalchemy.orm import DeclarativeBase, mapped_column
-import uuid
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import mapped_column
 from sqlalchemy import String, Integer
+from models.base import BaseModel
 
-class Vehicle(DeclarativeBase):
-    id = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        index=True,
-        nullable=False,
-        default=uuid.uuid4
-    )
-
+class Vehicle(BaseModel):
     make = mapped_column(String(100), nullable=False)
 
     model = mapped_column(String(100), nullable=False)
@@ -21,3 +12,5 @@ class Vehicle(DeclarativeBase):
     capacity = mapped_column(Integer, nullable=False)
 
     plate_number = mapped_column(String(100), nullable=False)
+
+    

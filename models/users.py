@@ -1,20 +1,13 @@
-from sqlalchemy.orm import DeclarativeBase, mapped_column
-import uuid 
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import String, Integer  
+from sqlalchemy.orm import mapped_column
+from sqlalchemy import String
+from models.base import BaseModel
 
-class User(DeclarativeBase):
-    id = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        index=True,
-        nullable=False,
-        default=uuid.uuid4
-    )
+
+class User(BaseModel):
 
     first_name = mapped_column(String(100), nullable=False) 
 
-    Last_name = mapped_column(String(100), nullable=False)  
+    last_name = mapped_column(String(100), nullable=False)  
 
     email = mapped_column(String(100), nullable=False, unique=True)
 

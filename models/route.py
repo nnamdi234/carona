@@ -1,16 +1,8 @@
-from sqlalchemy.orm import DeclarativeBase, mapped_column
-import uuid     
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import String, Integer, Float
+from sqlalchemy.orm import mapped_column
+from sqlalchemy import String, Float
+from models.base import BaseModel
 
-class Route(DeclarativeBase):
-    id = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        index=True,
-        nullable=False,
-        default=uuid.uuid4
-    )
+class Route(BaseModel):
 
     origin = mapped_column(String(255), nullable=False)
 
