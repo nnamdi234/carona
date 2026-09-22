@@ -18,12 +18,6 @@ class Ride(BaseModel):
         nullable=True
     )
 
-    route_id = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("route.id", ondelete="CASCADE"),
-        nullable=True
-    )
-
     origin = mapped_column(String(255), nullable=False)
 
     destination = mapped_column(String(255), nullable=False)

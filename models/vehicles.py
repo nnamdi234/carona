@@ -19,5 +19,4 @@ class Vehicle(BaseModel):
         UUID(as_uuid=True),
         ForeignKey("user.id", ondelete="CASCADE"),
         nullable=True,
-        
-    )
+    ) 
