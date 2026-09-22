@@ -5,6 +5,8 @@ from models.base import BaseModel
 
 class User(BaseModel):
 
+    __tablename__ = "users"
+
     first_name = mapped_column(String(100), nullable=False) 
 
     last_name = mapped_column(String(100), nullable=False)  

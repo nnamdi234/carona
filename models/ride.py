@@ -6,6 +6,9 @@ from sqlalchemy import ForeignKey
 
 
 class Ride(BaseModel):
+
+    __tablename__ = "rides"
+
     driver_id = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("user.id", ondelete="CASCADE"),

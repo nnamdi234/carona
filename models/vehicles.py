@@ -5,6 +5,9 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import ForeignKey
 
 class Vehicle(BaseModel):
+
+    __tablename__ = "vehicles"
+
     make = mapped_column(String(100), nullable=False)
 
     model = mapped_column(String(100), nullable=False)
