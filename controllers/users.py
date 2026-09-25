@@ -20,7 +20,7 @@ async def create_user(db: AsyncSession, user_input: UserCreate):
     # check if phone_number exists if provided
     if user_input.phone_number:
         existing_phone_number = await db.execute(
-            select(User).where(User.email == user_input.email)
+            select(User).where(User.phone_number == user_input.phone_number)
         )
 
         if existing_phone_number.scalar_one_or_none() is not None:
@@ -28,3 +28,19 @@ async def create_user(db: AsyncSession, user_input: UserCreate):
                 status_code=400,
                 detail= "A user with this phonenumber already exists"
             )
+
+    new_user = User(
+        first_name=user_input.first_name,
+        last_name=user_input.last_name,
+        email=user_input.email,
+        phone_number=user_input.phone_number,
+        password=user_input.password,
+        role="user"
+    )
+
+
+    db.add(new_user)
+    await db.flush()
+    await db.refresh(new_user)
+
+    return new_user
