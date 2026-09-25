@@ -120,9 +120,12 @@ async def run_tests():
         assert login_resp.status_code == 200
         login_data = login_resp.json()
         assert login_data["message"] == "Login successful"
+        assert "access_token" in login_data
+        assert login_data["token_type"] == "bearer"
         assert login_data["user"]["email"] == "alice@example.com"
         assert "password" not in login_data["user"]
-        print("Login successful for alice@example.com")
+        print("Login successful with JWT for alice@example.com")
+
 
         # Wrong password
         bad_pwd_payload = {

@@ -34,9 +34,7 @@ async def login(
     credentials: UserLogin,
     db: AsyncSession = Depends(get_db)
 ):
-    """Route handler for user login. Delegates verification logic to user_controller."""
-    user = await user_controller.authenticate_user(db=db, credentials=credentials)
-    return LoginResponse(
-        message="Login successful",
-        user=UserResponse.model_validate(user)
-    )
+    """Route handler for user login. Delegates verification and token issuance to user_controller."""
+    return await user_controller.authenticate_user(db=db, credentials=credentials)
+
+

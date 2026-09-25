@@ -3,8 +3,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.users import User
-from schemas.user import UserCreate, UserLogin
-from utils.security import hash_password, verify_password
+from schemas.user import LoginResponse, UserCreate, UserLogin, UserResponse
+from utils.security import create_access_token, hash_password, verify_password
 
 
 async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
@@ -50,8 +50,8 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
     return new_user
 
 
-async def authenticate_user(db: AsyncSession, credentials: UserLogin) -> User:
-    """Business logic for verifying user login credentials."""
+async def authenticate_user(db: AsyncSession, credentials: UserLogin) -> LoginResponse:
+    """Business logic for verifying user login credentials and generating a JWT access token."""
     result = await db.execute(
         select(User).where(User.email == credentials.email)
     )
@@ -77,4 +77,14 @@ async def authenticate_user(db: AsyncSession, credentials: UserLogin) -> User:
             detail="Invalid email or password."
         )
 
-    return user
+    access_token = create_access_token(
+        data={"sub": str(user.id), "email": user.email, "role": user.role}
+    )
+
+    return LoginResponse(
+        message="Login successful",
+        access_token=access_token,
+        token_type="bearer",
+        user=UserResponse.model_validate(user)
+    )
+

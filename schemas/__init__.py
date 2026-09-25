@@ -5,6 +5,12 @@ from schemas.user import (
     UserResponse,
     LoginResponse,
 )
+from schemas.vehicle import (
+    VehicleBase,
+    VehicleCreate,
+    VehicleUpdate,
+    VehicleResponse,
+)
 
 __all__ = [
     "UserBase",
@@ -12,4 +18,8 @@ __all__ = [
     "UserLogin",
     "UserResponse",
     "LoginResponse",
+    "VehicleBase",
+    "VehicleCreate",
+    "VehicleUpdate",
+    "VehicleResponse",
 ]
