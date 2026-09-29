@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from schemas.users import UserCreate
+from schemas.users import UserCreate, UserLogin
 from sqlalchemy import select
 from models.users import User
 from fastapi import HTTPException
@@ -44,3 +44,27 @@ async def create_user(db: AsyncSession, user_input: UserCreate):
     await db.refresh(new_user)
 
     return new_user
+
+
+async def login_user(db: AsyncSession, user_input: UserLogin):
+    # Check if email exists
+    result = await db.execute(
+        select(User).where(User.email == user_input.email)
+    )
+
+    user = result.scalar_one_or_none()
+
+    if user is None:
+        raise HTTPException(
+            status_code=403,
+            detail="This account does not exist. Please register"
+        )
+
+    
+    if user.password != user_input.password:
+        raise HTTPException(
+            status_code=403,
+            detail="Incorrect password"
+        )
+
+    return {"success": "logged in successfully"}
