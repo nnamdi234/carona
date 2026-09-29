@@ -1,5 +1,6 @@
 from fastapi import FastAPI     
 from routes.users import router as user_router
+from routes.vehicles import router as vehicle_router
 from contextlib import asynccontextmanager
 from db import engine
 from models.base import Base
@@ -22,6 +23,7 @@ app = FastAPI(
 )
 
 app.include_router(user_router)
+app.include_router(vehicle_router)
 
 @app.get("/health")
 async def health():
