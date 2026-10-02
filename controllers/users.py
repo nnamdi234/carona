@@ -44,7 +44,7 @@ async def create_user(db: AsyncSession, user_input: UserCreate):
     await db.flush()
     await db.refresh(new_user)
 
-    return new_user
+    return {"success": True, "message": "Account successfully created", "data": new_user}
 
 
 async def login_user(db: AsyncSession, user_input: UserLogin):
@@ -68,4 +68,4 @@ async def login_user(db: AsyncSession, user_input: UserLogin):
             detail="Incorrect password"
         )
 
-    return {"success": "logged in successfully"}
+    return {"success": True, "message": "logged in successfully", "data": None}
