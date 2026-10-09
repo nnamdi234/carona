@@ -5,7 +5,7 @@ from models.vehicles import Vehicle
 from fastapi import HTTPException
 
 
-async def create_vehicle(db: AsyncSession, user_input: VehicleCreate):
+async def create(db: AsyncSession, user_input: VehicleCreate):
     # check if plate number already exists
     existing_vehicle = await db.execute(
         select(Vehicle).where(Vehicle.plate_number == user_input.plate_number)
@@ -22,7 +22,7 @@ async def create_vehicle(db: AsyncSession, user_input: VehicleCreate):
         model = user_input.model,
         colour = user_input.colour,
         capacity = user_input.capacity,
-        plate_number = user_input.plate_number
+        plate_number = user_input.plate_number,
     )
 
     db.add(new_vehicle)
