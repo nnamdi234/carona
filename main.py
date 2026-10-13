@@ -3,7 +3,7 @@ from routes.users import router as user_router
 from routes.vehicles import router as vehicles_router
 from contextlib import asynccontextmanager
 from db import engine
-from models.base import Base
+from models import Base
 
 
 

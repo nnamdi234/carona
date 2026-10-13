@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas.vehicles import VehicleCreate
 from sqlalchemy import select
-from models.vehicles import Vehicle
+from models import Vehicle
 from fastapi import HTTPException
 
 

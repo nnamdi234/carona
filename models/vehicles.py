@@ -20,6 +20,6 @@ class Vehicle(BaseModel):
 
     owner_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("user.id", ondelete="CASCADE"),
+        ForeignKey("users.id", ondelete="CASCADE"),
         nullable=True,
     ) 

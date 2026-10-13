@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas.users import UserCreate, UserLogin
 from sqlalchemy import select
-from models.users import User
+from models import User
 from fastapi import HTTPException
 from utils.security import hash_password, verify_password
 

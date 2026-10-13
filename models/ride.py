@@ -11,13 +11,13 @@ class Ride(BaseModel):
 
     driver_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("user.id", ondelete="CASCADE"),
+        ForeignKey("users.id", ondelete="CASCADE"),
         nullable=True,
     )
 
     vehicle_id = mapped_column(
         UUID(as_uuid=True),                 
-        ForeignKey("vehicle.id", ondelete="CASCADE"),
+        ForeignKey("vehicles.id", ondelete="CASCADE"),
         nullable=True
     )
 
