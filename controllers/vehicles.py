@@ -30,3 +30,12 @@ async def create(db: AsyncSession, user_input: VehicleCreate):
     await db.refresh(new_vehicle)
 
     return {"success": True, "message": "vehicle created successfully", "data": new_vehicle}
+
+async def get_all_vehicles(db:AsyncSession):
+    result = await db.execute(
+        select(Vehicle)
+    )
+
+    vehicles = result.scalars().all()
+
+    return {"success": True, "message": "vehicles retrieved successfully", "data": vehicles}
