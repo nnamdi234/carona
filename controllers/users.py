@@ -69,3 +69,16 @@ async def login_user(db: AsyncSession, user_input: UserLogin):
         )
 
     return {"success": True, "message": "logged in successfully", "data": None}
+
+
+
+async def get_all_users(db: AsyncSession):
+
+    result = await db.execute(
+        select(User)
+    )
+
+    users = result.scalars().all()
+
+    return {"success": True, "message": "users retrieved successfully", "data": users}
+
