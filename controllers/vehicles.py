@@ -3,6 +3,7 @@ from schemas.vehicles import VehicleCreate
 from sqlalchemy import select
 from models import Vehicle
 from fastapi import HTTPException
+from uuid import UUID
 
 
 async def create(db: AsyncSession, user_input: VehicleCreate):
@@ -39,3 +40,19 @@ async def get_all_vehicles(db:AsyncSession):
     vehicles = result.scalars().all()
 
     return {"success": True, "message": "vehicles retrieved successfully", "data": vehicles}
+
+async def get_vehicle_by_id(db: AsyncSession, vehicle_id: UUID):
+
+    result = await db.execute(
+        select(Vehicle).where(Vehicle.id == vehicle_id)
+    )
+
+    vehicle = result.scalar_one_or_none()
+
+    if vehicle is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle no found"
+        )
+
+    return {"success": True, "message": "vehicle retrieved successfully", "data": vehicle}
