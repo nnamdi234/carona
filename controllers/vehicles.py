@@ -52,7 +52,7 @@ async def get_vehicle_by_id(db: AsyncSession, vehicle_id: UUID):
     if vehicle is None:
         raise HTTPException(
             status_code=404,
-            detail="Vehicle no found"
+            detail="Vehicle not found"
         )
 
     return {"success": True, "message": "vehicle retrieved successfully", "data": vehicle}

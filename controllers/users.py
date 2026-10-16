@@ -4,6 +4,7 @@ from sqlalchemy import select
 from models import User
 from fastapi import HTTPException
 from utils.security import hash_password, verify_password
+from uuid import UUID
 
 
 async def create_user(db: AsyncSession, user_input: UserCreate):
@@ -81,4 +82,20 @@ async def get_all_users(db: AsyncSession):
     users = result.scalars().all()
 
     return {"success": True, "message": "users retrieved successfully", "data": users}
+
+async def get_user_by_id(db: AsyncSession, user_id: UUID):
+
+    result = await db.execute(
+        select(User).where(User.id ==user_id)
+    )
+
+    user = result.scalar_one_or_none()
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail= "User not found"
+        )
+
+    return {"success": True, "message": "user retrieved successfully", "data": user}
 

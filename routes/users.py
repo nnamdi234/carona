@@ -6,6 +6,8 @@ from db import get_db
 from schemas.users import UserLogin
 from controllers.users import login_user
 from controllers.users import get_all_users
+from controllers.users import get_user_by_id
+from uuid import UUID
 
 router = APIRouter(prefix="/users")
 
@@ -22,3 +24,7 @@ async def login_account(user_input:UserLogin, db: AsyncSession = Depends(get_db)
 @router.get("/", response_model=None)
 async def get_all(db: AsyncSession = Depends(get_db)):
     return await get_all_users(db)
+
+@router.get("/{user_id}", response_model=None)
+async def get(user_id: UUID, db: AsyncSession = Depends(get_db)):
+    return await get_user_by_id(db, user_id)
