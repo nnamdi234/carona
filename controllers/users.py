@@ -5,6 +5,7 @@ from models import User
 from fastapi import HTTPException
 from utils.security import hash_password, verify_password
 from uuid import UUID
+from utils.security import create_access_token
 
 
 async def create_user(db: AsyncSession, user_input: UserCreate):
@@ -69,7 +70,18 @@ async def login_user(db: AsyncSession, user_input: UserLogin):
             detail="Incorrect password"
         )
 
-    return {"success": True, "message": "logged in successfully", "data": None}
+    access_token = create_access_token(
+        data={"user_id": str(user.id),"email": user.email,"role": user.role}
+    )
+
+    return {
+        "success": True, 
+        "message": "logged in successfully",
+        "data": {
+            "access_token": access_token,
+            "token_type": "bearer"
+        }
+        }
 
 
 
