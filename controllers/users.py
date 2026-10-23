@@ -111,3 +111,5 @@ async def get_user_by_id(db: AsyncSession, user_id: UUID):
 
     return {"success": True, "message": "user retrieved successfully", "data": user}
 
+async def get_me(current_user:User):
+    return {"success": True, "message": "user retrieved successfully", "data": current_user}
