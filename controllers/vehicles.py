@@ -4,9 +4,9 @@ from sqlalchemy import select
 from models import Vehicle
 from fastapi import HTTPException
 from uuid import UUID
+from models import User
 
-
-async def create(db: AsyncSession, user_input: VehicleCreate):
+async def create(db: AsyncSession, user_input: VehicleCreate, current_user: User):
     # check if plate number already exists
     existing_vehicle = await db.execute(
         select(Vehicle).where(Vehicle.plate_number == user_input.plate_number)
@@ -24,6 +24,7 @@ async def create(db: AsyncSession, user_input: VehicleCreate):
         colour = user_input.colour,
         capacity = user_input.capacity,
         plate_number = user_input.plate_number,
+        owner_id = current_user.id
     )
 
     db.add(new_vehicle)
