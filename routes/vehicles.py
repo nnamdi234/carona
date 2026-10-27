@@ -15,8 +15,8 @@ async def create_vehicle(user_input: VehicleCreate, db: AsyncSession = Depends(g
     return await create(db, user_input, current_user)
 
 @router.get("/", response_model=None)
-async def get_all(db: AsyncSession = Depends(get_db)):
-    return await get_all_vehicles(db)
+async def get_all(db: AsyncSession = Depends(get_db),current_user: User = Depends(get_current_user)):
+    return await get_all_vehicles(db, current_user)
 
 
 @router.get("/{vehicle_id}", response_model=None)

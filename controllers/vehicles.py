@@ -33,9 +33,9 @@ async def create(db: AsyncSession, user_input: VehicleCreate, current_user: User
 
     return {"success": True, "message": "vehicle created successfully", "data": new_vehicle}
 
-async def get_all_vehicles(db:AsyncSession):
+async def get_all_vehicles(db:AsyncSession, current_user: User):
     result = await db.execute(
-        select(Vehicle)
+        select(Vehicle).where(Vehicle.owner_id == current_user.id)
     )
 
     vehicles = result.scalars().all()
