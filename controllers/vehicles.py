@@ -5,6 +5,8 @@ from models import Vehicle
 from fastapi import HTTPException
 from uuid import UUID
 from models import User
+from schemas.vehicles import VehicleUpdate
+
 
 async def create(db: AsyncSession, user_input: VehicleCreate, current_user: User):
     # check if plate number already exists
@@ -57,3 +59,33 @@ async def get_vehicle_by_id(db: AsyncSession, vehicle_id: UUID):
         )
 
     return {"success": True, "message": "vehicle retrieved successfully", "data": vehicle}
+
+
+async def update_vehicle(db: AsyncSession, vehicle_id: UUID, current_user: User, user_input: VehicleUpdate):
+    result = await db.execute(
+        select(Vehicle).where(Vehicle.id == vehicle_id)
+    )
+
+    vehicle = result.scalar_one_or_none()
+
+    if vehicle is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    if vehicle.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You can only update your own vehicle"
+        )
+
+    update_data = user_input.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(vehicle, key, value)
+
+    await db.flush()
+    await db.refresh(vehicle)
+
+    return {"success": True, "message": "vehicle updated successfully", "data": vehicle}
+
