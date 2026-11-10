@@ -116,9 +116,19 @@ async def get_me(current_user:User):
 
 async def update_me(db: AsyncSession, current_user: User, user_input: UserProfileUpdate):
 
-    update_data = user_input.model_dump(exclude_unset=True, exclude_none=True)
+    # Only the fields the client actually sent.
+    update_data = user_input.model_dump(exclude_unset=True)
 
-    if "phone_number" in update_data:
+    # Names are required on the account, so a null name is ignored.
+    for key in ("first_name", "last_name"):
+        if update_data.get(key) is None:
+            update_data.pop(key, None)
+
+    # Phone is optional: null (or an empty string) removes it.
+    if "phone_number" in update_data and not (update_data["phone_number"] or "").strip():
+        update_data["phone_number"] = None
+
+    if update_data.get("phone_number") is not None:
         existing_phone_number = await db.execute(
             select(User).where(
                 User.phone_number == update_data["phone_number"],
