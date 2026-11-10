@@ -11,6 +11,8 @@ from uuid import UUID
 from utils.security import get_current_user
 from models.users import User
 from controllers.users import get_me
+from schemas.users import UserProfileUpdate
+from controllers.users import update_me
 
 router = APIRouter(prefix="/users")
 
@@ -36,3 +38,11 @@ async def get_logged_in_user(current_user: User = Depends(get_current_user)):
 @router.get("/{user_id}", response_model=None)
 async def get(user_id: UUID, db: AsyncSession = Depends(get_db)):
     return await get_user_by_id(db, user_id)
+
+@router.patch("/me", response_model=None)
+async def update_logged_in_user(
+    user_input: UserProfileUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return await update_me(db, current_user, user_input)

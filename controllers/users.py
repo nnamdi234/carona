@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from utils.security import hash_password, verify_password
 from uuid import UUID
 from utils.security import create_access_token
-
+from schemas.users import UserProfileUpdate
 
 async def create_user(db: AsyncSession, user_input: UserCreate):
     # check if email exists
@@ -113,3 +113,29 @@ async def get_user_by_id(db: AsyncSession, user_id: UUID):
 
 async def get_me(current_user:User):
     return {"success": True, "message": "user retrieved successfully", "data": current_user}
+
+async def update_me(db: AsyncSession, current_user: User, user_input: UserProfileUpdate):
+
+    update_data = user_input.model_dump(exclude_unset=True, exclude_none=True)
+
+    if "phone_number" in update_data:
+        existing_phone_number = await db.execute(
+            select(User).where(
+                User.phone_number == update_data["phone_number"],
+                User.id != current_user.id
+            )
+        )
+
+        if existing_phone_number.scalar_one_or_none() is not None:
+            raise HTTPException(
+                status_code=400,
+                detail="A user with this phonenumber already exists"
+            )
+
+    for key, value in update_data.items():
+        setattr(current_user, key, value)
+
+    await db.flush()
+    await db.refresh(current_user)
+
+    return {"success": True, "message": "profile update successfully", "data": current_user}
