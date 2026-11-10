@@ -61,7 +61,7 @@ async def get_vehicle_by_id(db: AsyncSession, vehicle_id: UUID):
     return {"success": True, "message": "vehicle retrieved successfully", "data": vehicle}
 
 
-async def update_vehicle(db: AsyncSession, vehicle_id: UUID, current_user: User, user_input: VehicleUpdate):
+async def update_vehicle(db: AsyncSession, vehicle_id: UUID, user_input: VehicleUpdate, current_user: User):
     result = await db.execute(
         select(Vehicle).where(Vehicle.id == vehicle_id)
     )
@@ -80,7 +80,8 @@ async def update_vehicle(db: AsyncSession, vehicle_id: UUID, current_user: User,
             detail="You can only update your own vehicle"
         )
 
-    update_data = user_input.model_dump(exclude_unset=True)
+    # only the fields the user actually sent (skip missing ones and nulls)
+    update_data = user_input.model_dump(exclude_unset=True, exclude_none=True)
     for key, value in update_data.items():
         setattr(vehicle, key, value)
 
