@@ -25,7 +25,7 @@ class Ride(BaseModel):
 
     destination = mapped_column(String(255), nullable=False)
 
-    distance_km = mapped_column(Float, nullable=False)   
+    distance_km = mapped_column(Float, nullable=True)   
 
     departure_time =  mapped_column(
         DateTime(timezone=True),
@@ -41,3 +41,4 @@ class Ride(BaseModel):
 
     fare = mapped_column(Float, nullable=False)
     
+    seats_offered = mapped_column(Integer, nullable=False)
