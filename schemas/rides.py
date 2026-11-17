@@ -6,6 +6,6 @@ class RideCreate(BaseModel):
     vehicle_id:UUID
     origin: str = Field(..., min_length=255)
     destination:str = Field(..., min_length=2, max_length=255)
-    departure_time: AwareDaretime
-    seats_offered: int = fIELD(..., ge=1)
-    fare: float = Field(..., gt 0)
+    departure_time: AwareDatetime
+    seats_offered: int = Field(..., ge=1)
+    fare: float = Field(..., gt=0)
