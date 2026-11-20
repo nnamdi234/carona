@@ -29,7 +29,7 @@ async def create_ride(db: AsyncSession, user_input:RideCreate, current_user:User
     if user_input.seats_offered > vehicle.capacity:
         raise HTTPException(
             status_code=400,
-            detail="You can't offer more seats than your vehicle"
+            detail="You can't offer more seats than your vehicle has"
         )
 
     if user_input.departure_time <= datetime.now(timezone.utc):
@@ -44,6 +44,7 @@ async def create_ride(db: AsyncSession, user_input:RideCreate, current_user:User
         origin = user_input.origin.strip(),
         destination = user_input.destination.strip(),
         departure_time = user_input.departure_time,
+        seats_offered = user_input.seats_offered,
         fare = user_input.fare,
         status = "scheduled"
     )

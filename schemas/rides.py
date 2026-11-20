@@ -4,7 +4,7 @@ from uuid import UUID
 
 class RideCreate(BaseModel):
     vehicle_id:UUID
-    origin: str = Field(..., min_length=255)
+    origin: str = Field(..., min_length=2, max_length=255)
     destination:str = Field(..., min_length=2, max_length=255)
     departure_time: AwareDatetime
     seats_offered: int = Field(..., ge=1)
