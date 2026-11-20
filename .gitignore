@@ -2,3 +2,5 @@
 .env
 __pycache__
 *.html
+# Lesson pages and the domain brief are kept
+!docs/**/*.html

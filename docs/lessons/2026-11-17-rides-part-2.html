@@ -1,0 +1,852 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carona Rides, Part 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: one 760px reading column on the Carona surface; the four lesson parts are
+   stops on a route line, and the endpoint flow is drawn as a ride with four stops. */
+:root {
+  --surface: #f5f6f3;
+  --raised: #ffffff;
+  --sunken: #eceeea;
+  --line: #dde2dd;
+  --line-strong: #7f8a84;
+  --ink: #17201c;
+  --muted: #55625c;
+  --brand: #0b6b58;
+  --brand-strong: #085444;
+  --on-brand: #ffffff;
+  --brand-soft: #dcefe8;
+  --marking: #f2b233;
+  --marking-ink: #835600;
+  --info: #2f5bb7;
+  --info-soft: #e6edfa;
+  --success: #1d7341;
+  --success-soft: #e2f3e8;
+  --warning-soft: #fbf0d9;
+  --danger: #b42318;
+  --danger-soft: #fce8e6;
+  --focus: #2f5bb7;
+  --shadow: 0 1px 2px rgba(16,24,20,.06), 0 4px 12px rgba(16,24,20,.06);
+
+  /* code panel: the same dark editor in both themes */
+  --code-bg: #121a17;
+  --code-head: #1a2420;
+  --code-line: #2c3632;
+  --code-fg: #dfe7e2;
+  --code-dim: #8b9a93;
+  --code-kw: #7ad6c1;
+  --code-str: #f5c45e;
+  --code-fn: #9ab7f5;
+  --code-num: #ff9f92;
+  --code-cls: #8fe0b0;
+  --code-bad: rgba(255, 143, 128, .16);
+  --code-good: rgba(116, 211, 156, .14);
+
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --sans: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #0f1412; --raised: #18201d; --sunken: #222b27; --line: #2c3632; --line-strong: #6e7b75;
+    --ink: #e7ede9; --muted: #a0ada6; --brand: #4cc3a8; --brand-strong: #7ad6c1; --on-brand: #062a22;
+    --brand-soft: #173a31; --marking-ink: #f5c45e; --info: #9ab7f5; --info-soft: #1c2740;
+    --success: #74d39c; --success-soft: #173222; --warning-soft: #352a14; --danger: #ff8f80; --danger-soft: #3b1d1a;
+    --focus: #a9c3ff; --shadow: 0 1px 2px rgba(0,0,0,.5); --code-bg: #0b100e; --code-head: #141c19;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #0f1412; --raised: #18201d; --sunken: #222b27; --line: #2c3632; --line-strong: #6e7b75;
+  --ink: #e7ede9; --muted: #a0ada6; --brand: #4cc3a8; --brand-strong: #7ad6c1; --on-brand: #062a22;
+  --brand-soft: #173a31; --marking-ink: #f5c45e; --info: #9ab7f5; --info-soft: #1c2740;
+  --success: #74d39c; --success-soft: #173222; --warning-soft: #352a14; --danger: #ff8f80; --danger-soft: #3b1d1a;
+  --focus: #a9c3ff; --shadow: 0 1px 2px rgba(0,0,0,.5); --code-bg: #0b100e; --code-head: #141c19;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 96px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; color: var(--ink); }
+p { margin: 0; }
+a { color: var(--brand); font-weight: 600; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+:not(pre) > code {
+  font-family: var(--mono); font-size: .86em; background: var(--sunken); color: var(--ink);
+  padding: 1px 6px; border-radius: 6px; white-space: nowrap;
+}
+strong { font-weight: 700; }
+
+/* ---------- header ---------- */
+.eyebrow {
+  font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand);
+  display: flex; align-items: center; gap: 10px;
+}
+.eyebrow .plate {
+  font-family: var(--mono); letter-spacing: .08em; font-size: 12px; padding: 2px 8px; border-radius: 6px;
+  background: var(--marking); color: #2a1d00; font-weight: 600;
+}
+header.top { display: flex; flex-direction: column; gap: 14px; }
+header.top h1 { font-size: clamp(34px, 6vw, 48px); line-height: 1.05; letter-spacing: -.03em; font-weight: 800; }
+header.top .lede { font-size: 18px; color: var(--muted); max-width: 62ch; }
+
+/* today's route (table of contents) */
+.today { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.today h2 { font-size: 13px; font-family: var(--sans); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stops { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; position: relative; }
+.stops li { position: relative; padding: 0 0 14px 34px; }
+.stops li:last-child { padding-bottom: 0; }
+.stops li::before {
+  content: ""; position: absolute; left: 6px; top: 7px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--raised); border: 3px solid var(--brand);
+}
+.stops li:not(:last-child)::after {
+  content: ""; position: absolute; left: 11px; top: 22px; bottom: -2px; width: 2px;
+  background: repeating-linear-gradient(to bottom, var(--marking) 0 6px, transparent 6px 11px);
+}
+.stops a { color: var(--ink); text-decoration: none; font-weight: 600; }
+.stops a:hover { color: var(--brand); text-decoration: underline; }
+.stops span { display: block; color: var(--muted); font-size: 14px; }
+.stops li.after::before { border-color: var(--line-strong); }
+.stops li.after a { color: var(--muted); }
+
+/* ---------- parts ---------- */
+section.part { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 24px; }
+.part-head { display: flex; flex-direction: column; gap: 8px; padding-bottom: 14px; border-bottom: 2px solid var(--line); }
+.part-num { font-family: var(--mono); font-size: 13px; color: var(--brand); font-weight: 600; letter-spacing: .04em; }
+.part-head h2 { font-size: clamp(26px, 4.5vw, 32px); line-height: 1.15; letter-spacing: -.015em; }
+.endpoint { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--ink); }
+.method { font-size: 11px; font-weight: 600; letter-spacing: .06em; padding: 2px 7px; border-radius: 6px; background: var(--brand-soft); color: var(--brand); }
+.method.patch { background: var(--warning-soft); color: var(--marking-ink); }
+.method.get { background: var(--info-soft); color: var(--info); }
+.endpoints { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+
+h3.step { font-family: var(--sans); font-size: 17px; font-weight: 700; display: flex; gap: 12px; align-items: baseline; margin-top: 10px; }
+h3.step .n {
+  flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--brand); color: var(--on-brand); font-size: 13px; font-family: var(--mono); transform: translateY(-1px);
+}
+h3.step > span:last-child { min-width: 0; }
+.prose { display: flex; flex-direction: column; gap: 12px; max-width: 68ch; }
+ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+
+/* callouts */
+.note { border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+.note .label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.note.why { background: var(--info-soft); }
+.note.why .label { color: var(--info); }
+.note.warn { background: var(--warning-soft); }
+.note.warn .label { color: var(--marking-ink); }
+.note.danger { background: var(--danger-soft); }
+.note.danger .label { color: var(--danger); }
+.note.ok { background: var(--success-soft); }
+.note.ok .label { color: var(--success); }
+
+/* the big rule in part 3 */
+.rule {
+  background: var(--ink); color: var(--surface); border-radius: 16px; padding: 26px 28px;
+  display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden;
+}
+.rule::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px;
+  background: repeating-linear-gradient(90deg, var(--marking) 0 22px, transparent 22px 36px);
+}
+.rule .label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--marking); }
+.rule p.big { font-family: var(--display); font-size: clamp(24px, 4vw, 30px); line-height: 1.15; font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+.rule p.small { color: var(--surface); opacity: .82; max-width: 60ch; }
+
+/* ---------- code ---------- */
+.code { background: var(--code-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--code-line); min-width: 0; }
+.code-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--code-head); border-bottom: 1px solid var(--code-line); padding: 8px 10px 8px 16px;
+}
+.code-file { font-family: var(--mono); font-size: 12.5px; color: var(--code-fg); font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.code-file em { font-style: normal; color: var(--code-dim); }
+.tag { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; margin-right: 8px; }
+.tag.bad { background: #3b1d1a; color: #ff8f80; }
+.tag.good { background: #173222; color: #74d39c; }
+.copy {
+  flex: none; font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--code-fg);
+  background: transparent; border: 1px solid var(--code-line); border-radius: 8px; padding: 5px 12px; cursor: pointer;
+  transition: background 120ms var(--ease), color 120ms var(--ease);
+}
+.copy:hover { background: #24302b; }
+.copy.done { background: #173222; color: #74d39c; border-color: #1d7341; }
+.code pre { margin: 0; padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 13.5px; line-height: 1.7; color: var(--code-fg); tab-size: 4; }
+.code pre code { font-family: inherit; background: none; padding: 0; white-space: pre; display: block; }
+.code .hl-bad { background: var(--code-bad); display: inline-block; min-width: 100%; }
+.code .hl-good { background: var(--code-good); display: inline-block; min-width: 100%; }
+.hljs-keyword, .hljs-built_in.py-kw, .hljs-literal { color: var(--code-kw); }
+.hljs-string { color: var(--code-str); }
+.hljs-title.function_, .hljs-title { color: var(--code-fn); }
+.hljs-title.class_ { color: var(--code-cls); }
+.hljs-number { color: var(--code-num); }
+.hljs-comment { color: var(--code-dim); font-style: italic; }
+.hljs-built_in { color: var(--code-cls); }
+.hljs-meta { color: var(--code-fn); }
+.hljs-attr { color: var(--code-fn); }
+.hljs-params { color: var(--code-fg); }
+.pair { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+/* complete files */
+details.files { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; }
+details.files > summary {
+  cursor: pointer; list-style: none; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  font-weight: 700; font-family: var(--display); font-size: 20px;
+}
+details.files > summary::-webkit-details-marker { display: none; }
+details.files > summary .chev { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--brand); white-space: nowrap; }
+details.files[open] > summary .chev .closed, details.files:not([open]) > summary .chev .open { display: none; }
+details.files .inner { padding: 0 22px 22px; display: flex; flex-direction: column; gap: 18px; }
+details.files h3 { font-family: var(--mono); font-size: 14px; font-weight: 600; }
+
+/* test checklist */
+ol.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; counter-reset: c; }
+ol.checks li {
+  counter-increment: c; background: var(--raised); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 16px 12px 52px; position: relative; font-size: 15px;
+}
+ol.checks li::before {
+  content: counter(c); position: absolute; left: 14px; top: 12px; width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--sunken); color: var(--muted); font-family: var(--mono); font-size: 12px; font-weight: 600;
+}
+.expect { display: inline-block; font-family: var(--mono); font-size: 12px; font-weight: 600; padding: 1px 7px; border-radius: 6px; margin-left: 4px; }
+.expect.s2 { background: var(--success-soft); color: var(--success); }
+.expect.s4 { background: var(--warning-soft); color: var(--marking-ink); }
+
+/* json response comparison */
+.json-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+
+/* ---------- route flow (part 4) ---------- */
+.flow { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.flow-bar { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--line); align-items: center; }
+.flow-bar .lbl { font-size: 13px; font-weight: 600; color: var(--muted); margin-right: 4px; }
+.chip {
+  font-family: var(--sans); font-size: 13px; font-weight: 600; border-radius: 999px; padding: 7px 14px; cursor: pointer;
+  border: 1px solid var(--line-strong); background: var(--raised); color: var(--ink); min-height: 36px;
+  transition: background 120ms var(--ease), color 120ms var(--ease), border-color 120ms var(--ease);
+}
+.chip:hover { border-color: var(--brand); color: var(--brand); }
+.chip[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.chip.bad[aria-pressed="true"] { background: var(--danger); border-color: var(--danger); color: var(--raised); }
+.flow-canvas { overflow-x: auto; padding: 8px 8px 0; }
+.flow svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.flow svg text { font-family: var(--sans); }
+.stop-btn { cursor: pointer; }
+.stop-btn:focus { outline: none; }
+.stop-btn:focus-visible .ring { stroke: var(--focus); stroke-width: 3; }
+.flow-panel { padding: 18px 22px 22px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; min-height: 210px; }
+.flow-panel .k { font-family: var(--mono); font-size: 12px; color: var(--brand); font-weight: 600; letter-spacing: .04em; }
+.flow-panel h3 { font-size: 22px; letter-spacing: -.01em; }
+.flow-panel .q { color: var(--muted); font-size: 15px; }
+.flow-panel .example { background: var(--sunken); border-radius: 10px; padding: 12px 14px; font-size: 14.5px; display: flex; flex-direction: column; gap: 6px; }
+.flow-panel .example b { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.flow-panel.fail .k { color: var(--danger); }
+.flow-panel.fail h3 { color: var(--danger); }
+
+/* recipe cards */
+.recipe { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.recipe article { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.recipe .rk { display: flex; align-items: center; gap: 10px; }
+.recipe .rk .dot { width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; font-family: var(--mono); font-size: 13px; font-weight: 600; flex: none; }
+.recipe h3 { font-size: 19px; }
+.recipe .where { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.recipe ul { margin: 0; padding-left: 18px; font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+.recipe .done { font-size: 14px; border-top: 1px dashed var(--line); padding-top: 10px; color: var(--muted); }
+.recipe .done strong { color: var(--ink); }
+
+/* status code map */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; min-width: 520px; }
+th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+th { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--sunken); }
+td.code-cell { font-family: var(--mono); font-weight: 600; white-space: nowrap; }
+td .goto { font-weight: 700; color: var(--brand); white-space: nowrap; }
+
+footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 20px; display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; }
+
+@media (max-width: 520px) {
+  body { font-size: 15.5px; padding-block: 28px 72px; }
+  .wrap { gap: 44px; }
+  .today { padding: 18px; }
+  .flow-panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+<style>
+/* a quieter page: one column of steps, the code does the talking */
+.wrap { gap: 40px; }
+header.top h1 { font-size: clamp(30px, 5vw, 40px); }
+header.top .lede { font-size: 17px; }
+.step-block { display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 24px; }
+.step-block h2 { font-size: 22px; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.step-block h2 .n { font-family: var(--mono); font-size: 14px; color: var(--brand); font-weight: 600; }
+.step-block h2 .mins { margin-left: auto; font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--muted); }
+.step-block > p { color: var(--muted); max-width: 64ch; }
+.sub { font-family: var(--sans); font-size: 15px; font-weight: 700; margin-top: 6px; }
+ol.checks li { padding-top: 10px; padding-bottom: 10px; }
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow"><span class="plate">CARONA API</span> Rides, part 2</div>
+  <h1>Finish the rides endpoints</h1>
+  <p class="lede">The model and schema are on main. Today: fix them, then write the logic and the routes, and test them through Swagger and the app.</p>
+</header>
+
+<section class="step-block" id="pull">
+  <h2><span class="n">0</span>Get the latest code<span class="mins">2 min</span></h2>
+<div class="code"><div class="code-head"><span class="code-file">Terminal</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="bash" data-mark="">git checkout main
+git pull origin main</code></pre></div>
+</section>
+
+<section class="step-block" id="fix">
+  <h2><span class="n">1</span>Fix the model and the schema<span class="mins">8 min</span></h2>
+  <p>Start the server first and read the error. Then fix.</p>
+  <p class="sub">models/ride.py: <code>Integer</code> is used but not imported</p>
+<div class="code"><div class="code-head"><span class="code-file">models/ride.py <em>· line 2</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from sqlalchemy import String, Float, DateTime, Integer</code></pre></div>
+  <p class="sub">schemas/rides.py: four typos (marked)</p>
+<div class="code"><div class="code-head"><span class="code-file">schemas/rides.py <em>· whole file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="good:7,10,11,12">from pydantic import AwareDatetime, BaseModel, Field
+from uuid import UUID
+
+
+class RideCreate(BaseModel):
+    vehicle_id: UUID
+    origin: str = Field(..., min_length=2, max_length=255)
+    destination: str = Field(..., min_length=2, max_length=255)
+    # AwareDatetime means the time must say its timezone, e.g. 2026-11-20T07:30:00+01:00
+    departure_time: AwareDatetime
+    seats_offered: int = Field(..., ge=1)
+    fare: float = Field(..., gt=0)</code></pre></div>
+  <p>When the server starts, the <code>rides</code> table is created again with the new columns.</p>
+</section>
+
+<section class="step-block" id="logic">
+  <h2><span class="n">2</span>Logic: controllers/rides.py<span class="mins">25 min</span></h2>
+  <p class="sub">a · Imports and format_ride</p>
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py <em>· new file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from datetime import date, datetime, time, timedelta, timezone
+from uuid import UUID
+
+from fastapi import HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from models import Ride, User, Vehicle
+from schemas.rides import RideCreate
+
+# Lagos is UTC+1 all year (no daylight saving)
+LAGOS = timezone(timedelta(hours=1))
+
+
+def format_ride(ride: Ride, driver: User, vehicle: Vehicle):
+    # Build the ride by hand so we only send what passengers may see:
+    # no password, no email, no phone, no plate number.
+    return {
+        "id": ride.id,
+        "origin": ride.origin,
+        "destination": ride.destination,
+        "departure_time": ride.departure_time,
+        "arrival_time": ride.arrival_time,
+        "fare": ride.fare,
+        "status": ride.status,
+        "seats_offered": ride.seats_offered,
+        "seats_left": ride.seats_offered,  # no bookings yet, so every seat is free
+        "driver": {
+            "id": driver.id,
+            "first_name": driver.first_name,
+            "last_name": driver.last_name,
+        },
+        "vehicle": {
+            "make": vehicle.make,
+            "model": vehicle.model,
+            "colour": vehicle.colour,
+            "capacity": vehicle.capacity,
+        },
+    }</code></pre></div>
+  <p class="sub">b · Offer a ride</p>
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py <em>· under format_ride</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">async def create_ride(db: AsyncSession, user_input: RideCreate, current_user: User):
+    # 1. the vehicle must exist
+    result = await db.execute(
+        select(Vehicle).where(Vehicle.id == user_input.vehicle_id)
+    )
+    vehicle = result.scalar_one_or_none()
+
+    if vehicle is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    # 2. ...and belong to the person offering the ride
+    if vehicle.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You can only offer rides in your own vehicle"
+        )
+
+    # 3. you can't offer more seats than the car has
+    if user_input.seats_offered &gt; vehicle.capacity:
+        raise HTTPException(
+            status_code=400,
+            detail="You can't offer more seats than your vehicle has"
+        )
+
+    # 4. the ride must be in the future
+    if user_input.departure_time &lt;= datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=400,
+            detail="Departure time must be in the future"
+        )
+
+    new_ride = Ride(
+        driver_id = current_user.id,
+        vehicle_id = vehicle.id,
+        origin = user_input.origin.strip(),
+        destination = user_input.destination.strip(),
+        departure_time = user_input.departure_time,
+        seats_offered = user_input.seats_offered,
+        fare = user_input.fare,
+        status = "scheduled",
+    )
+
+    db.add(new_ride)
+    await db.flush()
+    await db.refresh(new_ride)
+
+    return {"success": True, "message": "ride created successfully", "data": format_ride(new_ride, current_user, vehicle)}</code></pre></div>
+  <p class="sub">c · Search rides</p>
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py <em>· under create_ride</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">async def search_rides(db: AsyncSession, origin: str | None, destination: str | None, day: date | None):
+    # Ride + its driver + its vehicle, in one query
+    query = (
+        select(Ride, User, Vehicle)
+        .join(User, Ride.driver_id == User.id)
+        .join(Vehicle, Ride.vehicle_id == Vehicle.id)
+        .where(Ride.status == "scheduled")
+        .where(Ride.departure_time &gt; datetime.now(timezone.utc))
+    )
+
+    # ilike = LIKE that ignores capital letters; % means "anything",
+    # so "ikeja" finds "Ikeja City Mall"
+    if origin:
+        query = query.where(Ride.origin.ilike(f"%{origin.strip()}%"))
+
+    if destination:
+        query = query.where(Ride.destination.ilike(f"%{destination.strip()}%"))
+
+    # a whole day in Lagos time: from 00:00 up to (not including) 00:00 the next day
+    if day:
+        start = datetime.combine(day, time.min, tzinfo=LAGOS)
+        end = start + timedelta(days=1)
+        query = query.where(Ride.departure_time &gt;= start, Ride.departure_time &lt; end)
+
+    query = query.order_by(Ride.departure_time)
+
+    result = await db.execute(query)
+    rides = [format_ride(ride, driver, vehicle) for ride, driver, vehicle in result.all()]
+
+    return {"success": True, "message": "rides retrieved successfully", "data": rides}</code></pre></div>
+  <p class="sub">d · Get one ride</p>
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py <em>· bottom of file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">async def get_ride_by_id(db: AsyncSession, ride_id: UUID):
+    result = await db.execute(
+        select(Ride, User, Vehicle)
+        .join(User, Ride.driver_id == User.id)
+        .join(Vehicle, Ride.vehicle_id == Vehicle.id)
+        .where(Ride.id == ride_id)
+    )
+    row = result.one_or_none()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Ride not found"
+        )
+
+    ride, driver, vehicle = row
+    return {"success": True, "message": "ride retrieved successfully", "data": format_ride(ride, driver, vehicle)}</code></pre></div>
+</section>
+
+<section class="step-block" id="routes">
+  <h2><span class="n">3</span>Routes<span class="mins">5 min</span></h2>
+<div class="code"><div class="code-head"><span class="code-file">routes/rides.py <em>· new file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from datetime import date
+from uuid import UUID
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from controllers.rides import create_ride, get_ride_by_id, search_rides
+from db import get_db
+from models import User
+from schemas.rides import RideCreate
+from utils.security import get_current_user
+
+router = APIRouter(prefix="/rides")
+
+
+@router.post("/", response_model=None)
+async def offer_ride(user_input: RideCreate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await create_ride(db, user_input, current_user)
+
+
+@router.get("/", response_model=None)
+async def search(
+    origin: str | None = None,
+    destination: str | None = None,
+    day: date | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    return await search_rides(db, origin, destination, day)
+
+
+@router.get("/{ride_id}", response_model=None)
+async def get(ride_id: UUID, db: AsyncSession = Depends(get_db)):
+    return await get_ride_by_id(db, ride_id)</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file">main.py <em>· add the two marked lines</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="good:3,7">from routes.users import router as user_router
+from routes.vehicles import router as vehicles_router
+from routes.rides import router as rides_router
+...
+app.include_router(user_router)
+app.include_router(vehicles_router)
+app.include_router(rides_router)</code></pre></div>
+</section>
+
+<section class="step-block" id="test">
+  <h2><span class="n">4</span>Test in Swagger<span class="mins">12 min</span></h2>
+  <p>Log in, Authorize, copy a vehicle id from <code>GET /vehicles/</code>.</p>
+<div class="code"><div class="code-head"><span class="code-file">POST /rides/ <em>· body</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="json" data-mark="">{
+  "vehicle_id": "PASTE-YOUR-VEHICLE-ID",
+  "origin": "Ikeja City Mall",
+  "destination": "Victoria Island",
+  "departure_time": "2026-11-20T07:30:00+01:00",
+  "seats_offered": 3,
+  "fare": 2500
+}</code></pre></div>
+  <ol class="checks">
+    <li>Send it <span class="expect s2">200</span></li>
+    <li><code>seats_offered</code> above the car's capacity <span class="expect s4">400</span></li>
+    <li>A date in the past <span class="expect s4">400</span></li>
+    <li>No <code>+01:00</code> on the time <span class="expect s4">422</span></li>
+    <li>Another user's vehicle <span class="expect s4">403</span> · a made-up vehicle id <span class="expect s4">404</span></li>
+    <li><code>GET /rides/?origin=ikeja&amp;day=2026-11-20</code> <span class="expect s2">200</span> · <code>day=2026-11-21</code> gives <code>[]</code></li>
+    <li><code>GET /rides/{ride_id}</code> <span class="expect s2">200</span> · a made-up id <span class="expect s4">404</span></li>
+  </ol>
+</section>
+
+<section class="step-block" id="app">
+  <h2><span class="n">5</span>Try it in the app, then commit<span class="mins">8 min</span></h2>
+  <p>In the frontend: Offer a ride → Find a ride → open the result.</p>
+<div class="code"><div class="code-head"><span class="code-file">Terminal <em>· carona-frontend</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="bash" data-mark="">npm run dev</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file">Terminal <em>· carona</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="bash" data-mark="">git add models/ride.py schemas/rides.py controllers/rides.py routes/rides.py main.py
+git commit -m "feat(rides): offer a ride, search rides and get one ride"
+git push origin main</code></pre></div>
+</section>
+
+<details class="files" id="files">
+  <summary>Complete files <span class="chev"><span class="closed">Show</span><span class="open">Hide</span></span></summary>
+  <div class="inner">
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from datetime import date, datetime, time, timedelta, timezone
+from uuid import UUID
+
+from fastapi import HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from models import Ride, User, Vehicle
+from schemas.rides import RideCreate
+
+# Lagos is UTC+1 all year (no daylight saving)
+LAGOS = timezone(timedelta(hours=1))
+
+
+def format_ride(ride: Ride, driver: User, vehicle: Vehicle):
+    # Build the ride by hand so we only send what passengers may see:
+    # no password, no email, no phone, no plate number.
+    return {
+        "id": ride.id,
+        "origin": ride.origin,
+        "destination": ride.destination,
+        "departure_time": ride.departure_time,
+        "arrival_time": ride.arrival_time,
+        "fare": ride.fare,
+        "status": ride.status,
+        "seats_offered": ride.seats_offered,
+        "seats_left": ride.seats_offered,  # no bookings yet, so every seat is free
+        "driver": {
+            "id": driver.id,
+            "first_name": driver.first_name,
+            "last_name": driver.last_name,
+        },
+        "vehicle": {
+            "make": vehicle.make,
+            "model": vehicle.model,
+            "colour": vehicle.colour,
+            "capacity": vehicle.capacity,
+        },
+    }
+
+
+async def create_ride(db: AsyncSession, user_input: RideCreate, current_user: User):
+    # 1. the vehicle must exist
+    result = await db.execute(
+        select(Vehicle).where(Vehicle.id == user_input.vehicle_id)
+    )
+    vehicle = result.scalar_one_or_none()
+
+    if vehicle is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    # 2. ...and belong to the person offering the ride
+    if vehicle.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You can only offer rides in your own vehicle"
+        )
+
+    # 3. you can't offer more seats than the car has
+    if user_input.seats_offered &gt; vehicle.capacity:
+        raise HTTPException(
+            status_code=400,
+            detail="You can't offer more seats than your vehicle has"
+        )
+
+    # 4. the ride must be in the future
+    if user_input.departure_time &lt;= datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=400,
+            detail="Departure time must be in the future"
+        )
+
+    new_ride = Ride(
+        driver_id = current_user.id,
+        vehicle_id = vehicle.id,
+        origin = user_input.origin.strip(),
+        destination = user_input.destination.strip(),
+        departure_time = user_input.departure_time,
+        seats_offered = user_input.seats_offered,
+        fare = user_input.fare,
+        status = "scheduled",
+    )
+
+    db.add(new_ride)
+    await db.flush()
+    await db.refresh(new_ride)
+
+    return {"success": True, "message": "ride created successfully", "data": format_ride(new_ride, current_user, vehicle)}
+
+
+async def search_rides(db: AsyncSession, origin: str | None, destination: str | None, day: date | None):
+    # Ride + its driver + its vehicle, in one query
+    query = (
+        select(Ride, User, Vehicle)
+        .join(User, Ride.driver_id == User.id)
+        .join(Vehicle, Ride.vehicle_id == Vehicle.id)
+        .where(Ride.status == "scheduled")
+        .where(Ride.departure_time &gt; datetime.now(timezone.utc))
+    )
+
+    # ilike = LIKE that ignores capital letters; % means "anything",
+    # so "ikeja" finds "Ikeja City Mall"
+    if origin:
+        query = query.where(Ride.origin.ilike(f"%{origin.strip()}%"))
+
+    if destination:
+        query = query.where(Ride.destination.ilike(f"%{destination.strip()}%"))
+
+    # a whole day in Lagos time: from 00:00 up to (not including) 00:00 the next day
+    if day:
+        start = datetime.combine(day, time.min, tzinfo=LAGOS)
+        end = start + timedelta(days=1)
+        query = query.where(Ride.departure_time &gt;= start, Ride.departure_time &lt; end)
+
+    query = query.order_by(Ride.departure_time)
+
+    result = await db.execute(query)
+    rides = [format_ride(ride, driver, vehicle) for ride, driver, vehicle in result.all()]
+
+    return {"success": True, "message": "rides retrieved successfully", "data": rides}
+
+
+async def get_ride_by_id(db: AsyncSession, ride_id: UUID):
+    result = await db.execute(
+        select(Ride, User, Vehicle)
+        .join(User, Ride.driver_id == User.id)
+        .join(Vehicle, Ride.vehicle_id == Vehicle.id)
+        .where(Ride.id == ride_id)
+    )
+    row = result.one_or_none()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Ride not found"
+        )
+
+    ride, driver, vehicle = row
+    return {"success": True, "message": "ride retrieved successfully", "data": format_ride(ride, driver, vehicle)}</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file">routes/rides.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from datetime import date
+from uuid import UUID
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from controllers.rides import create_ride, get_ride_by_id, search_rides
+from db import get_db
+from models import User
+from schemas.rides import RideCreate
+from utils.security import get_current_user
+
+router = APIRouter(prefix="/rides")
+
+
+@router.post("/", response_model=None)
+async def offer_ride(user_input: RideCreate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await create_ride(db, user_input, current_user)
+
+
+@router.get("/", response_model=None)
+async def search(
+    origin: str | None = None,
+    destination: str | None = None,
+    day: date | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    return await search_rides(db, origin, destination, day)
+
+
+@router.get("/{ride_id}", response_model=None)
+async def get(ride_id: UUID, db: AsyncSession = Depends(get_db)):
+    return await get_ride_by_id(db, ride_id)</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file">schemas/rides.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from pydantic import AwareDatetime, BaseModel, Field
+from uuid import UUID
+
+
+class RideCreate(BaseModel):
+    vehicle_id: UUID
+    origin: str = Field(..., min_length=2, max_length=255)
+    destination: str = Field(..., min_length=2, max_length=255)
+    # AwareDatetime means the time must say its timezone, e.g. 2026-11-20T07:30:00+01:00
+    departure_time: AwareDatetime
+    seats_offered: int = Field(..., ge=1)
+    fare: float = Field(..., gt=0)</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file">models/ride.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from sqlalchemy.orm import mapped_column
+from sqlalchemy import String, Float, DateTime, Integer
+from models.base import BaseModel
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import ForeignKey
+
+
+class Ride(BaseModel):
+
+    __tablename__ = "rides"
+
+    driver_id = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,
+    )
+
+    vehicle_id = mapped_column(
+        UUID(as_uuid=True),                 
+        ForeignKey("vehicles.id", ondelete="CASCADE"),
+        nullable=True
+    )
+
+    origin = mapped_column(String(255), nullable=False)
+
+    destination = mapped_column(String(255), nullable=False)
+
+    distance_km = mapped_column(Float, nullable=True)   
+
+    departure_time =  mapped_column(
+        DateTime(timezone=True),
+        nullable=True,   
+    )      
+
+    arrival_time = mapped_column(       
+        DateTime(timezone=True),
+        nullable=True,   
+    )
+
+    status = mapped_column(String(100), nullable=False, default="scheduled")
+
+    fare = mapped_column(Float, nullable=False)
+    
+    seats_offered = mapped_column(Integer, nullable=False)</code></pre></div>
+  </div>
+</details>
+
+<footer>
+  <span>Carona API · Rides, part 2</span>
+  <span>Next: bookings</span>
+</footer>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+/* ---------- syntax highlighting that keeps our line marks ---------- */
+document.querySelectorAll('pre code[data-lang]').forEach(function (el) {
+  var raw = el.textContent;
+  var html = raw;
+  try {
+    if (window.hljs) html = hljs.highlight(raw, { language: el.dataset.lang, ignoreIllegals: true }).value;
+    else html = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  } catch (e) { html = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  var marks = {};
+  (el.dataset.mark || '').split(';').filter(Boolean).forEach(function (part) {
+    var kind = part.split(':')[0], list = part.split(':')[1];
+    list.split(',').forEach(function (r) {
+      var a = r.split('-'), s = +a[0], e = +(a[1] || a[0]);
+      for (var i = s; i <= e; i++) marks[i] = kind;
+    });
+  });
+  // hljs spans never cross newlines for these languages, so a line split is safe
+  var lines = html.split('\n');
+  el.innerHTML = lines.map(function (l, i) {
+    var k = marks[i + 1];
+    return k ? '<span class="hl-' + k + '">' + (l || ' ') + '</span>' : l;
+  }).join('\n');
+});
+
+/* ---------- copy buttons ---------- */
+document.querySelectorAll('.copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var code = btn.closest('.code').querySelector('code');
+    var text = code.textContent;
+    function ok() {
+      btn.textContent = 'Copied';
+      btn.classList.add('done');
+      setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1600);
+    }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(code);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Press Ctrl+C';
+    }
+    try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (e) { fallback(); }
+  });
+});
+
+</script>
+
+</body></html>

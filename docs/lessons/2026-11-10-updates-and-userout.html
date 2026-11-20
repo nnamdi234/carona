@@ -1,0 +1,1117 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Carona Updates &amp; UserOut</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: one 760px reading column on the Carona surface; the four lesson parts are
+   stops on a route line, and the endpoint flow is drawn as a ride with four stops. */
+:root {
+  --surface: #f5f6f3;
+  --raised: #ffffff;
+  --sunken: #eceeea;
+  --line: #dde2dd;
+  --line-strong: #7f8a84;
+  --ink: #17201c;
+  --muted: #55625c;
+  --brand: #0b6b58;
+  --brand-strong: #085444;
+  --on-brand: #ffffff;
+  --brand-soft: #dcefe8;
+  --marking: #f2b233;
+  --marking-ink: #835600;
+  --info: #2f5bb7;
+  --info-soft: #e6edfa;
+  --success: #1d7341;
+  --success-soft: #e2f3e8;
+  --warning-soft: #fbf0d9;
+  --danger: #b42318;
+  --danger-soft: #fce8e6;
+  --focus: #2f5bb7;
+  --shadow: 0 1px 2px rgba(16,24,20,.06), 0 4px 12px rgba(16,24,20,.06);
+
+  /* code panel: the same dark editor in both themes */
+  --code-bg: #121a17;
+  --code-head: #1a2420;
+  --code-line: #2c3632;
+  --code-fg: #dfe7e2;
+  --code-dim: #8b9a93;
+  --code-kw: #7ad6c1;
+  --code-str: #f5c45e;
+  --code-fn: #9ab7f5;
+  --code-num: #ff9f92;
+  --code-cls: #8fe0b0;
+  --code-bad: rgba(255, 143, 128, .16);
+  --code-good: rgba(116, 211, 156, .14);
+
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --sans: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #0f1412; --raised: #18201d; --sunken: #222b27; --line: #2c3632; --line-strong: #6e7b75;
+    --ink: #e7ede9; --muted: #a0ada6; --brand: #4cc3a8; --brand-strong: #7ad6c1; --on-brand: #062a22;
+    --brand-soft: #173a31; --marking-ink: #f5c45e; --info: #9ab7f5; --info-soft: #1c2740;
+    --success: #74d39c; --success-soft: #173222; --warning-soft: #352a14; --danger: #ff8f80; --danger-soft: #3b1d1a;
+    --focus: #a9c3ff; --shadow: 0 1px 2px rgba(0,0,0,.5); --code-bg: #0b100e; --code-head: #141c19;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #0f1412; --raised: #18201d; --sunken: #222b27; --line: #2c3632; --line-strong: #6e7b75;
+  --ink: #e7ede9; --muted: #a0ada6; --brand: #4cc3a8; --brand-strong: #7ad6c1; --on-brand: #062a22;
+  --brand-soft: #173a31; --marking-ink: #f5c45e; --info: #9ab7f5; --info-soft: #1c2740;
+  --success: #74d39c; --success-soft: #173222; --warning-soft: #352a14; --danger: #ff8f80; --danger-soft: #3b1d1a;
+  --focus: #a9c3ff; --shadow: 0 1px 2px rgba(0,0,0,.5); --code-bg: #0b100e; --code-head: #141c19;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 96px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; color: var(--ink); }
+p { margin: 0; }
+a { color: var(--brand); font-weight: 600; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+:not(pre) > code {
+  font-family: var(--mono); font-size: .86em; background: var(--sunken); color: var(--ink);
+  padding: 1px 6px; border-radius: 6px; white-space: nowrap;
+}
+strong { font-weight: 700; }
+
+/* ---------- header ---------- */
+.eyebrow {
+  font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand);
+  display: flex; align-items: center; gap: 10px;
+}
+.eyebrow .plate {
+  font-family: var(--mono); letter-spacing: .08em; font-size: 12px; padding: 2px 8px; border-radius: 6px;
+  background: var(--marking); color: #2a1d00; font-weight: 600;
+}
+header.top { display: flex; flex-direction: column; gap: 14px; }
+header.top h1 { font-size: clamp(34px, 6vw, 48px); line-height: 1.05; letter-spacing: -.03em; font-weight: 800; }
+header.top .lede { font-size: 18px; color: var(--muted); max-width: 62ch; }
+
+/* today's route (table of contents) */
+.today { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.today h2 { font-size: 13px; font-family: var(--sans); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stops { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; position: relative; }
+.stops li { position: relative; padding: 0 0 14px 34px; }
+.stops li:last-child { padding-bottom: 0; }
+.stops li::before {
+  content: ""; position: absolute; left: 6px; top: 7px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--raised); border: 3px solid var(--brand);
+}
+.stops li:not(:last-child)::after {
+  content: ""; position: absolute; left: 11px; top: 22px; bottom: -2px; width: 2px;
+  background: repeating-linear-gradient(to bottom, var(--marking) 0 6px, transparent 6px 11px);
+}
+.stops a { color: var(--ink); text-decoration: none; font-weight: 600; }
+.stops a:hover { color: var(--brand); text-decoration: underline; }
+.stops span { display: block; color: var(--muted); font-size: 14px; }
+.stops li.after::before { border-color: var(--line-strong); }
+.stops li.after a { color: var(--muted); }
+
+/* ---------- parts ---------- */
+section.part { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 24px; }
+.part-head { display: flex; flex-direction: column; gap: 8px; padding-bottom: 14px; border-bottom: 2px solid var(--line); }
+.part-num { font-family: var(--mono); font-size: 13px; color: var(--brand); font-weight: 600; letter-spacing: .04em; }
+.part-head h2 { font-size: clamp(26px, 4.5vw, 32px); line-height: 1.15; letter-spacing: -.015em; }
+.endpoint { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--ink); }
+.method { font-size: 11px; font-weight: 600; letter-spacing: .06em; padding: 2px 7px; border-radius: 6px; background: var(--brand-soft); color: var(--brand); }
+.method.patch { background: var(--warning-soft); color: var(--marking-ink); }
+.method.get { background: var(--info-soft); color: var(--info); }
+.endpoints { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+
+h3.step { font-family: var(--sans); font-size: 17px; font-weight: 700; display: flex; gap: 12px; align-items: baseline; margin-top: 10px; }
+h3.step .n {
+  flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--brand); color: var(--on-brand); font-size: 13px; font-family: var(--mono); transform: translateY(-1px);
+}
+h3.step > span:last-child { min-width: 0; }
+.prose { display: flex; flex-direction: column; gap: 12px; max-width: 68ch; }
+ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+
+/* callouts */
+.note { border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+.note .label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.note.why { background: var(--info-soft); }
+.note.why .label { color: var(--info); }
+.note.warn { background: var(--warning-soft); }
+.note.warn .label { color: var(--marking-ink); }
+.note.danger { background: var(--danger-soft); }
+.note.danger .label { color: var(--danger); }
+.note.ok { background: var(--success-soft); }
+.note.ok .label { color: var(--success); }
+
+/* the big rule in part 3 */
+.rule {
+  background: var(--ink); color: var(--surface); border-radius: 16px; padding: 26px 28px;
+  display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden;
+}
+.rule::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px;
+  background: repeating-linear-gradient(90deg, var(--marking) 0 22px, transparent 22px 36px);
+}
+.rule .label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--marking); }
+.rule p.big { font-family: var(--display); font-size: clamp(24px, 4vw, 30px); line-height: 1.15; font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+.rule p.small { color: var(--surface); opacity: .82; max-width: 60ch; }
+
+/* ---------- code ---------- */
+.code { background: var(--code-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--code-line); min-width: 0; }
+.code-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--code-head); border-bottom: 1px solid var(--code-line); padding: 8px 10px 8px 16px;
+}
+.code-file { font-family: var(--mono); font-size: 12.5px; color: var(--code-fg); font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.code-file em { font-style: normal; color: var(--code-dim); }
+.tag { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; margin-right: 8px; }
+.tag.bad { background: #3b1d1a; color: #ff8f80; }
+.tag.good { background: #173222; color: #74d39c; }
+.copy {
+  flex: none; font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--code-fg);
+  background: transparent; border: 1px solid var(--code-line); border-radius: 8px; padding: 5px 12px; cursor: pointer;
+  transition: background 120ms var(--ease), color 120ms var(--ease);
+}
+.copy:hover { background: #24302b; }
+.copy.done { background: #173222; color: #74d39c; border-color: #1d7341; }
+.code pre { margin: 0; padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 13.5px; line-height: 1.7; color: var(--code-fg); tab-size: 4; }
+.code pre code { font-family: inherit; background: none; padding: 0; white-space: pre; display: block; }
+.code .hl-bad { background: var(--code-bad); display: inline-block; min-width: 100%; }
+.code .hl-good { background: var(--code-good); display: inline-block; min-width: 100%; }
+.hljs-keyword, .hljs-built_in.py-kw, .hljs-literal { color: var(--code-kw); }
+.hljs-string { color: var(--code-str); }
+.hljs-title.function_, .hljs-title { color: var(--code-fn); }
+.hljs-title.class_ { color: var(--code-cls); }
+.hljs-number { color: var(--code-num); }
+.hljs-comment { color: var(--code-dim); font-style: italic; }
+.hljs-built_in { color: var(--code-cls); }
+.hljs-meta { color: var(--code-fn); }
+.hljs-attr { color: var(--code-fn); }
+.hljs-params { color: var(--code-fg); }
+.pair { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+/* complete files */
+details.files { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; }
+details.files > summary {
+  cursor: pointer; list-style: none; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  font-weight: 700; font-family: var(--display); font-size: 20px;
+}
+details.files > summary::-webkit-details-marker { display: none; }
+details.files > summary .chev { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--brand); white-space: nowrap; }
+details.files[open] > summary .chev .closed, details.files:not([open]) > summary .chev .open { display: none; }
+details.files .inner { padding: 0 22px 22px; display: flex; flex-direction: column; gap: 18px; }
+details.files h3 { font-family: var(--mono); font-size: 14px; font-weight: 600; }
+
+/* test checklist */
+ol.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; counter-reset: c; }
+ol.checks li {
+  counter-increment: c; background: var(--raised); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 16px 12px 52px; position: relative; font-size: 15px;
+}
+ol.checks li::before {
+  content: counter(c); position: absolute; left: 14px; top: 12px; width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--sunken); color: var(--muted); font-family: var(--mono); font-size: 12px; font-weight: 600;
+}
+.expect { display: inline-block; font-family: var(--mono); font-size: 12px; font-weight: 600; padding: 1px 7px; border-radius: 6px; margin-left: 4px; }
+.expect.s2 { background: var(--success-soft); color: var(--success); }
+.expect.s4 { background: var(--warning-soft); color: var(--marking-ink); }
+
+/* json response comparison */
+.json-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+
+/* ---------- route flow (part 4) ---------- */
+.flow { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.flow-bar { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--line); align-items: center; }
+.flow-bar .lbl { font-size: 13px; font-weight: 600; color: var(--muted); margin-right: 4px; }
+.chip {
+  font-family: var(--sans); font-size: 13px; font-weight: 600; border-radius: 999px; padding: 7px 14px; cursor: pointer;
+  border: 1px solid var(--line-strong); background: var(--raised); color: var(--ink); min-height: 36px;
+  transition: background 120ms var(--ease), color 120ms var(--ease), border-color 120ms var(--ease);
+}
+.chip:hover { border-color: var(--brand); color: var(--brand); }
+.chip[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.chip.bad[aria-pressed="true"] { background: var(--danger); border-color: var(--danger); color: var(--raised); }
+.flow-canvas { overflow-x: auto; padding: 8px 8px 0; }
+.flow svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.flow svg text { font-family: var(--sans); }
+.stop-btn { cursor: pointer; }
+.stop-btn:focus { outline: none; }
+.stop-btn:focus-visible .ring { stroke: var(--focus); stroke-width: 3; }
+.flow-panel { padding: 18px 22px 22px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; min-height: 210px; }
+.flow-panel .k { font-family: var(--mono); font-size: 12px; color: var(--brand); font-weight: 600; letter-spacing: .04em; }
+.flow-panel h3 { font-size: 22px; letter-spacing: -.01em; }
+.flow-panel .q { color: var(--muted); font-size: 15px; }
+.flow-panel .example { background: var(--sunken); border-radius: 10px; padding: 12px 14px; font-size: 14.5px; display: flex; flex-direction: column; gap: 6px; }
+.flow-panel .example b { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.flow-panel.fail .k { color: var(--danger); }
+.flow-panel.fail h3 { color: var(--danger); }
+
+/* recipe cards */
+.recipe { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.recipe article { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.recipe .rk { display: flex; align-items: center; gap: 10px; }
+.recipe .rk .dot { width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; font-family: var(--mono); font-size: 13px; font-weight: 600; flex: none; }
+.recipe h3 { font-size: 19px; }
+.recipe .where { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.recipe ul { margin: 0; padding-left: 18px; font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+.recipe .done { font-size: 14px; border-top: 1px dashed var(--line); padding-top: 10px; color: var(--muted); }
+.recipe .done strong { color: var(--ink); }
+
+/* status code map */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; min-width: 520px; }
+th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+th { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--sunken); }
+td.code-cell { font-family: var(--mono); font-weight: 600; white-space: nowrap; }
+td .goto { font-weight: 700; color: var(--brand); white-space: nowrap; }
+
+footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 20px; display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; }
+
+@media (max-width: 520px) {
+  body { font-size: 15.5px; padding-block: 28px 72px; }
+  .wrap { gap: 44px; }
+  .today { padding: 18px; }
+  .flow-panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow"><span class="plate">CARONA API</span> Lesson · Updates and safe responses</div>
+  <h1>Add Edit Profile, and stop sending password hashes</h1>
+  <p class="lede">We finish what we started last class with PATCH /users/me, then make sure our API never sends a password hash to anyone. At the end we write down the four steps we follow to build any endpoint.</p>
+</header>
+
+<nav class="today" aria-label="Today's route">
+  <h2>Today's route</h2>
+  <ol class="stops">
+    <li><a href="#pull">Pull the vehicle update fix</a><span>git pull, then one quick check</span></li>
+    <li><a href="#me">1. Build PATCH /users/me</a><span>Let a signed-in user edit their own profile</span></li>
+    <li><a href="#userout">2. UserOut: never send the password hash</a><span>The most important part of today</span></li>
+    <li><a href="#flow">3. The 4 steps for building any endpoint</a><span>Schemas → Logic → Route → Test</span></li>
+    <li class="after"><a href="#flow">Then: the frontend</a><span>We open the screens and connect them to this API</span></li>
+  </ol>
+</nav>
+
+<!-- =============================== BEFORE WE START =============================== -->
+<section class="part" id="pull">
+  <div class="part-head">
+    <span class="part-num">BEFORE WE START</span>
+    <h2>Pull the vehicle update fix</h2>
+    <div class="endpoints"><span class="endpoint"><span class="method patch">PATCH</span>/vehicles/{vehicle_id}</span></div>
+  </div>
+  <div class="prose">
+    <p>The <code>PATCH /vehicles/{vehicle_id}</code> we wrote last class had two bugs. They're fixed on GitHub, so pull the fix before we start:</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">Terminal</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="bash" data-mark="">git pull origin main</code></pre></div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>What you saw</th><th>Why it happened</th><th>The fix</th></tr></thead>
+      <tbody>
+        <tr><td class="code-cell">422 Field required</td><td><code>Optional[str]</code> only means "may be None". <code>Field(...)</code>, with the three dots, still made every field required.</td><td><code>Field(default=None)</code> on every field in <code>VehicleUpdate</code></td></tr>
+        <tr><td class="code-cell">500 AttributeError</td><td>Python matches arguments by <strong>position</strong>. The route sent <code>user_input, current_user</code> and the controller expected <code>current_user, user_input</code>.</td><td>Same order in the controller as in the route</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose">
+    <p>Quick check in Swagger: send only <code>{"colour": "Matte Black"}</code> to one of your vehicles. You should get <span class="expect s2">200</span>, and only the colour changes. We'll meet these two errors again in Part 3.</p>
+  </div>
+</section>
+
+<!-- =============================== PART 2 =============================== -->
+<section class="part" id="me">
+  <div class="part-head">
+    <span class="part-num">PART 1</span>
+    <h2>Let users edit their own profile</h2>
+    <div class="endpoints"><span class="endpoint"><span class="method patch">PATCH</span>/users/me</span></div>
+  </div>
+  <div class="prose">
+    <p>A signed-in user can change their first name, last name and phone number. They can't change their email or role here. The path is <code>/me</code> instead of <code>/{user_id}</code> because the token already tells us who is asking. Nobody can edit somebody else's profile.</p>
+  </div>
+
+  <h3 class="step"><span class="n">a</span><span>Input schema: <code>UserProfileUpdate</code></span></h3>
+  <div class="prose"><p>Every field has <code>default=None</code>, like the fixed <code>VehicleUpdate</code>. That's what makes a field optional. The user sends only what they want to change.</p></div>
+<div class="code"><div class="code-head"><span class="code-file">schemas/users.py <em>· bottom of file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">class UserProfileUpdate(BaseModel):
+    first_name: Optional[str] = Field(default=None, min_length=2, max_length=100)
+    last_name: Optional[str] = Field(default=None, min_length=2, max_length=100)
+    phone_number: Optional[str] = Field(default=None, max_length=15)</code></pre></div>
+
+  <h3 class="step"><span class="n">b</span><span>Logic: <code>update_me</code></span></h3>
+  <div class="prose">
+    <p>Phone numbers are unique in the database. If the user picks a number someone else already has, saving would crash with a 500. So we check first and send a clear 400. The <code>User.id != current_user.id</code> part lets a user send their own number again.</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">controllers/users.py <em>· top of file: add UserProfileUpdate to this import</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from schemas.users import UserCreate, UserLogin, UserProfileUpdate</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file">controllers/users.py <em>· bottom of file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">async def update_me(db: AsyncSession, current_user: User, user_input: UserProfileUpdate):
+    # only the fields the user actually sent (skip missing ones and nulls)
+    update_data = user_input.model_dump(exclude_unset=True, exclude_none=True)
+
+    # phone numbers are unique, so check nobody else has the new one
+    if "phone_number" in update_data:
+        existing_phone_number = await db.execute(
+            select(User).where(
+                User.phone_number == update_data["phone_number"],
+                User.id != current_user.id
+            )
+        )
+
+        if existing_phone_number.scalar_one_or_none() is not None:
+            raise HTTPException(
+                status_code=400,
+                detail="A user with this phonenumber already exists"
+            )
+
+    for key, value in update_data.items():
+        setattr(current_user, key, value)
+
+    await db.flush()
+    await db.refresh(current_user)
+
+    return {"success": True, "message": "profile updated successfully", "data": current_user}</code></pre></div>
+  <div class="note why">
+    <span class="label">Why no db.add()?</span>
+    <p><code>get_current_user</code> loaded this user with the same database session the route uses, because FastAPI gives one request one <code>get_db</code>. The session is already tracking the user, so changing the attributes is enough. <code>get_db</code> commits when the request finishes.</p>
+  </div>
+
+  <h3 class="step"><span class="n">c</span><span>Route: <code>@router.patch("/me")</code></span></h3>
+<div class="code"><div class="code-head"><span class="code-file">routes/users.py <em>· top of file: update these two imports</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from schemas.users import UserCreate, UserLogin, UserProfileUpdate
+from controllers.users import create_user, login_user, get_all_users, get_user_by_id, get_me, update_me</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file">routes/users.py <em>· under @router.get(&quot;/me&quot;)</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">@router.patch("/me", response_model=None)
+async def update_logged_in_user(
+    user_input: UserProfileUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return await update_me(db, current_user, user_input)</code></pre></div>
+  <div class="note warn">
+    <span class="label">Order matters</span>
+    <p>Keep every <code>/me</code> route <strong>above</strong> <code>@router.get("/{user_id}")</code>. FastAPI checks routes from top to bottom. If <code>/{user_id}</code> comes first, it tries to read <code>"me"</code> as a UUID and returns 422.</p>
+  </div>
+
+  <h3 class="step"><span class="n">d</span><span>Test it in Swagger</span></h3>
+  <ol class="checks">
+    <li>Without authorizing, call <code>PATCH /users/me</code>. <span class="expect s4">401</span></li>
+    <li>Authorize, then send <code>{"first_name": "Adaeze"}</code>. <span class="expect s2">200</span> Call <code>GET /users/me</code> to see the change.</li>
+    <li>Send a phone number another user already has. <span class="expect s4">400</span></li>
+    <li>Look at the response body carefully. What else is in <code>data</code>? That's Part 2.</li>
+  </ol>
+</section>
+
+<!-- =============================== PART 3 =============================== -->
+<section class="part" id="userout">
+  <div class="part-head">
+    <span class="part-num">PART 2 · THE BIG ONE</span>
+    <h2>UserOut: never send the password hash</h2>
+    <div class="endpoints">
+      <span class="endpoint"><span class="method">POST</span>/users/register</span>
+      <span class="endpoint"><span class="method get">GET</span>/users/</span>
+      <span class="endpoint"><span class="method get">GET</span>/users/me</span>
+      <span class="endpoint"><span class="method patch">PATCH</span>/users/me</span>
+      <span class="endpoint"><span class="method get">GET</span>/users/{user_id}</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>Every user endpoint returns the <code>User</code> object from the database, and FastAPI sends every column it has. That includes <code>password</code>. Here is <code>GET /users/me</code> right now:</p>
+  </div>
+  <div class="json-pair">
+<div class="code"><div class="code-head"><span class="code-file"><span class="tag bad">Before</span>Response today</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="json" data-mark="bad:9">{
+  "success": true,
+  "message": "user retrieved successfully",
+  "data": {
+    "id": "07ebe05b-0c2c-4427-bafc-b8c4933a59db",
+    "first_name": "Ada",
+    "last_name": "Obi",
+    "email": "ada@example.com",
+    "password": "$2b$12$Qm7c3J0...hashed...xYk2",
+    "phone_number": "08012345678",
+    "role": "user",
+    "created_at": "2026-11-10T09:04:04Z",
+    "updated_at": "2026-11-10T09:04:04Z",
+    "deleted_at": null
+  }
+}</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file"><span class="tag good">After</span>Response after UserOut</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="json" data-mark="">{
+  "success": true,
+  "message": "user retrieved successfully",
+  "data": {
+    "id": "07ebe05b-0c2c-4427-bafc-b8c4933a59db",
+    "first_name": "Ada",
+    "last_name": "Obi",
+    "email": "ada@example.com",
+    "phone_number": "08012345678",
+    "role": "user",
+    "created_at": "2026-11-10T09:04:04Z"
+  }
+}</code></pre></div>
+  </div>
+
+  <div class="note danger">
+    <span class="label">Why a hash is still a secret</span>
+    <p>A bcrypt hash can't be turned back into the password, but it can be <strong>guessed against</strong>. Someone with the hash can try millions of common passwords on their own computer, and our server never knows. And <code>GET /users/</code> doesn't need a login, so right now anyone can download every user's hash with one request.</p>
+  </div>
+
+  <div class="rule">
+    <span class="label">The rule</span>
+    <p class="big">The database model is not the response. You decide what leaves the server.</p>
+    <p class="small">The <code style="background:rgba(255,255,255,.12);color:inherit">User</code> model describes what we <em>store</em>. A response schema describes what we <em>send</em>. They are different things and get different classes. Write an output schema for every model you return.</p>
+  </div>
+
+  <h3 class="step"><span class="n">a</span><span>Write the output schemas</span></h3>
+  <div class="prose">
+    <p><code>UserOut</code> lists the fields a client is allowed to see, and <code>password</code> isn't one of them. Our responses are wrapped in <code>success</code>, <code>message</code> and <code>data</code>, so we also describe the wrapper: one with a single user and one with a list.</p>
+    <p><code>from_attributes=True</code> lets Pydantic read from a database object (<code>user.first_name</code>), not only from a dict (<code>user["first_name"]</code>).</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">schemas/users.py <em>· top of file: replace the imports</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from typing import Optional
+from uuid import UUID
+from datetime import datetime
+from pydantic import BaseModel, EmailStr, Field, ConfigDict</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file">schemas/users.py <em>· bottom of file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">class UserOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    first_name: str
+    last_name: str
+    email: str
+    phone_number: Optional[str] = None
+    role: str
+    created_at: datetime
+
+
+class UserResponse(BaseModel):
+    success: bool
+    message: str
+    data: UserOut
+
+
+class UserListResponse(BaseModel):
+    success: bool
+    message: str
+    data: list[UserOut]</code></pre></div>
+
+  <h3 class="step"><span class="n">b</span><span>Put the schemas on the routes with <code>response_model</code></span></h3>
+  <div class="prose">
+    <p>So far every route had <code>response_model=None</code>, which means "send whatever I return". With a response model, FastAPI checks the return value against the schema and <strong>drops every field the schema doesn't list</strong>. The controller still returns the full <code>User</code>, but the password never leaves the route.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Route</th><th>response_model</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST /register</code></td><td><code>UserResponse</code></td><td>Returns the new user</td></tr>
+        <tr><td><code>POST /login</code></td><td><code>None</code> (no change)</td><td>Returns a token, not a user</td></tr>
+        <tr><td><code>GET /</code></td><td><code>UserListResponse</code></td><td>Returns a list of users</td></tr>
+        <tr><td><code>GET /me</code></td><td><code>UserResponse</code></td><td>Returns one user</td></tr>
+        <tr><td><code>PATCH /me</code></td><td><code>UserResponse</code></td><td>Returns the updated user</td></tr>
+        <tr><td><code>GET /{user_id}</code></td><td><code>UserResponse</code></td><td>Returns one user</td></tr>
+      </tbody>
+    </table>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">routes/users.py <em>· whole file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="good:3,13,23,28,33,42">from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from schemas.users import UserCreate, UserLogin, UserProfileUpdate, UserResponse, UserListResponse
+from controllers.users import create_user, login_user, get_all_users, get_user_by_id, get_me, update_me
+from db import get_db
+from utils.security import get_current_user
+from models import User
+from uuid import UUID
+
+router = APIRouter(prefix="/users")
+
+
+@router.post("/register", response_model=UserResponse)
+async def create_account(user_input: UserCreate, db: AsyncSession = Depends(get_db)):
+    return await create_user(db, user_input)
+
+
+@router.post("/login", response_model=None)
+async def login_account(user_input: UserLogin, db: AsyncSession = Depends(get_db)):
+    return await login_user(db, user_input)
+
+
+@router.get("/", response_model=UserListResponse)
+async def get_all(db: AsyncSession = Depends(get_db)):
+    return await get_all_users(db)
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_logged_in_user(current_user: User = Depends(get_current_user)):
+    return await get_me(current_user)
+
+
+@router.patch("/me", response_model=UserResponse)
+async def update_logged_in_user(
+    user_input: UserProfileUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return await update_me(db, current_user, user_input)
+
+
+@router.get("/{user_id}", response_model=UserResponse)
+async def get(user_id: UUID, db: AsyncSession = Depends(get_db)):
+    return await get_user_by_id(db, user_id)</code></pre></div>
+
+  <h3 class="step"><span class="n">c</span><span>Test it in Swagger</span></h3>
+  <ol class="checks">
+    <li>Call <code>GET /users/me</code>, <code>GET /users/</code> and <code>GET /users/{user_id}</code>. No response has <code>password</code>. <span class="expect s2">200</span></li>
+    <li>Register a new user. The response has no <code>password</code> either.</li>
+    <li>Scroll to the bottom of the Swagger page and open <strong>Schemas → UserOut</strong>. Swagger now shows exactly what a client gets back, so the frontend knows what to expect.</li>
+  </ol>
+  <div class="note why">
+    <span class="label">Think about it</span>
+    <p>The password is gone, but <code>GET /users/</code> still lists every user's email and phone number to anyone, without logging in. Who should be allowed to call it? We'll come back to this.</p>
+  </div>
+</section>
+
+<!-- =============================== PART 4 =============================== -->
+<section class="part" id="flow">
+  <div class="part-head">
+    <span class="part-num">PART 3</span>
+    <h2>The 4 steps for building any endpoint</h2>
+  </div>
+  <div class="prose">
+    <p>Last week we talked about the order we build in. You just followed it for PATCH /users/me. Here it is written down, so every new endpoint follows the same steps:</p>
+    <p><strong>Schemas → Logic → Route → Test.</strong> If a test fails, the status code tells you which step to go back to.</p>
+  </div>
+
+  <div class="flow" id="flowbox">
+    <div class="flow-bar" role="group" aria-label="Play a trip">
+      <span class="lbl">Play a trip for PATCH /users/me:</span>
+      <button class="chip" type="button" id="play-ok" aria-pressed="true">Everything passes</button>
+      <button class="chip bad" type="button" id="play-422" aria-pressed="false">Test fails with 422</button>
+      <button class="chip bad" type="button" id="play-500" aria-pressed="false">Test fails with 500</button>
+    </div>
+    <div class="flow-canvas">
+      <svg viewBox="0 0 860 250" role="img" aria-labelledby="flow-title">
+        <title id="flow-title">A route with four stops: Schemas, Logic, Route, Test. A failed test loops back to an earlier stop.</title>
+        <!-- road -->
+        <path id="road" d="M70 110 H790" fill="none" stroke="var(--sunken)" stroke-width="26" stroke-linecap="round"/>
+        <path d="M70 110 H790" fill="none" stroke="var(--marking)" stroke-width="3" stroke-dasharray="14 12"/>
+        <!-- return loops (drawn under) -->
+        <path id="back-422" d="M790 124 C 790 230, 70 230, 70 124" fill="none" stroke="var(--danger)" stroke-width="2.5" stroke-dasharray="7 7" opacity="0"/>
+        <path id="back-500" d="M790 124 C 790 205, 310 205, 310 124" fill="none" stroke="var(--danger)" stroke-width="2.5" stroke-dasharray="7 7" opacity="0"/>
+        <text id="back-422-lbl" x="430" y="222" text-anchor="middle" font-size="13" font-weight="700" fill="var(--danger)" opacity="0">422 → back to Schemas</text>
+        <text id="back-500-lbl" x="550" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="var(--danger)" opacity="0">500 → back to Logic</text>
+        <!-- stops -->
+        <g class="stop-btn" data-stop="0" tabindex="0" role="button" aria-label="Stop 1: Schemas">
+          <circle class="ring" cx="70" cy="110" r="22" fill="var(--raised)" stroke="var(--brand)" stroke-width="4"/>
+          <text x="70" y="115" text-anchor="middle" font-size="15" font-weight="700" fill="var(--brand)" font-family="JetBrains Mono, monospace">1</text>
+          <text x="70" y="58" text-anchor="middle" font-size="17" font-weight="700" fill="var(--ink)">Schemas</text>
+          <text x="70" y="77" text-anchor="middle" font-size="12.5" fill="var(--muted)">in &amp; out</text>
+        </g>
+        <g class="stop-btn" data-stop="1" tabindex="0" role="button" aria-label="Stop 2: Logic">
+          <circle class="ring" cx="310" cy="110" r="22" fill="var(--raised)" stroke="var(--brand)" stroke-width="4"/>
+          <text x="310" y="115" text-anchor="middle" font-size="15" font-weight="700" fill="var(--brand)" font-family="JetBrains Mono, monospace">2</text>
+          <text x="310" y="58" text-anchor="middle" font-size="17" font-weight="700" fill="var(--ink)">Logic</text>
+          <text x="310" y="77" text-anchor="middle" font-size="12.5" fill="var(--muted)">controllers/</text>
+        </g>
+        <g class="stop-btn" data-stop="2" tabindex="0" role="button" aria-label="Stop 3: Route">
+          <circle class="ring" cx="550" cy="110" r="22" fill="var(--raised)" stroke="var(--brand)" stroke-width="4"/>
+          <text x="550" y="115" text-anchor="middle" font-size="15" font-weight="700" fill="var(--brand)" font-family="JetBrains Mono, monospace">3</text>
+          <text x="550" y="58" text-anchor="middle" font-size="17" font-weight="700" fill="var(--ink)">Route</text>
+          <text x="550" y="77" text-anchor="middle" font-size="12.5" fill="var(--muted)">routes/</text>
+        </g>
+        <g class="stop-btn" data-stop="3" tabindex="0" role="button" aria-label="Stop 4: Test">
+          <circle class="ring" cx="790" cy="110" r="22" fill="var(--raised)" stroke="var(--brand)" stroke-width="4"/>
+          <text x="790" y="115" text-anchor="middle" font-size="15" font-weight="700" fill="var(--brand)" font-family="JetBrains Mono, monospace">4</text>
+          <text x="790" y="58" text-anchor="middle" font-size="17" font-weight="700" fill="var(--ink)">Test</text>
+          <text x="790" y="77" text-anchor="middle" font-size="12.5" fill="var(--muted)">Swagger</text>
+        </g>
+        <!-- the car -->
+        <g id="car" transform="translate(70 110)" pointer-events="none">
+          <rect x="-17" y="-10" width="34" height="20" rx="7" fill="var(--brand)"/>
+          <rect x="1" y="-6" width="10" height="12" rx="3" fill="var(--brand-soft)"/>
+          <circle id="car-light" cx="16" cy="0" r="2.6" fill="var(--marking)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="flow-panel" id="panel" aria-live="polite"></div>
+  </div>
+
+  <div class="recipe">
+    <article>
+      <div class="rk"><span class="dot">1</span><h3>Schemas</h3></div>
+      <span class="where">schemas/&lt;thing&gt;.py</span>
+      <ul>
+        <li><strong>In:</strong> what does the client send? Which fields are required and which are optional? What are the limits (length, type)?</li>
+        <li><strong>Out:</strong> what do we send back? Which fields must <em>never</em> leave the server?</li>
+      </ul>
+      <p class="done"><strong>Done when</strong> you have an input class (if the request has a body) and an output class.</p>
+    </article>
+    <article>
+      <div class="rk"><span class="dot">2</span><h3>Logic</h3></div>
+      <span class="where">controllers/&lt;thing&gt;.py</span>
+      <ul>
+        <li>Write the steps in plain words first: <em>find it → check it → change it → save → return</em>.</li>
+        <li>Each check gets its own error: not there → <strong>404</strong>, not yours → <strong>403</strong>, bad or duplicate data → <strong>400</strong>.</li>
+      </ul>
+      <p class="done"><strong>Done when</strong> the function returns <code>{"success", "message", "data"}</code>.</p>
+    </article>
+    <article>
+      <div class="rk"><span class="dot">3</span><h3>Route</h3></div>
+      <span class="where">routes/&lt;thing&gt;.py</span>
+      <ul>
+        <li>Method + path: GET reads, POST creates, PATCH changes part of something.</li>
+        <li>Does it need a login? Add <code>Depends(get_current_user)</code>.</li>
+        <li>Set <code>response_model</code>. Put fixed paths like <code>/me</code> above <code>/{id}</code>.</li>
+      </ul>
+      <p class="done"><strong>Done when</strong> the endpoint shows up in Swagger.</p>
+    </article>
+    <article>
+      <div class="rk"><span class="dot">4</span><h3>Test</h3></div>
+      <span class="where">http://127.0.0.1:8000/docs</span>
+      <ul>
+        <li>Test the success case first, then <strong>every error you wrote in step 2</strong>.</li>
+        <li>Read the whole response body. Is anything there that shouldn't be?</li>
+        <li>If something fails, use the table below to find which step to go back to.</li>
+      </ul>
+      <p class="done"><strong>Done when</strong> every case gives the status you planned.</p>
+    </article>
+  </div>
+
+  <h3 class="step"><span class="n">?</span><span>When a test fails, which step do I go back to?</span></h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>You get</th><th>It usually means</th><th>Go back to</th></tr></thead>
+      <tbody>
+        <tr><td class="code-cell">422</td><td>The request didn't match the input schema. A field is missing, or the type or length is wrong.</td><td><span class="goto">1 · Schemas</span></td></tr>
+        <tr><td class="code-cell">500</td><td>Our code crashed. Read the traceback in the terminal: the last line names the error.</td><td><span class="goto">2 · Logic</span></td></tr>
+        <tr><td class="code-cell">200, wrong data</td><td>The logic did the wrong thing, or the output schema sends too much or too little.</td><td><span class="goto">2 · Logic</span> or <span class="goto">1 · Schemas</span></td></tr>
+        <tr><td class="code-cell">404 / 405</td><td>Wrong path or method, or <code>/{id}</code> is catching a path like <code>/me</code>. (A 404 you raised on purpose is fine.)</td><td><span class="goto">3 · Route</span></td></tr>
+        <tr><td class="code-cell">401</td><td>No token, or a bad one. Did you click Authorize?</td><td><span class="goto">4 · Test</span> (log in again)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- =============================== FILES =============================== -->
+<details class="files" id="files">
+  <summary>Check your work: complete files <span class="chev"><span class="closed">Show files</span><span class="open">Hide files</span></span></summary>
+  <div class="inner">
+    <h3>schemas/users.py</h3>
+<div class="code"><div class="code-head"><span class="code-file">schemas/users.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from typing import Optional
+from uuid import UUID
+from datetime import datetime
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
+
+
+class UserCreate(BaseModel):
+    first_name: str = Field(..., min_length=2, max_length=100)
+    last_name: str = Field(..., min_length=2, max_length=100)
+    email: EmailStr = Field(...)
+    phone_number: Optional[str] = Field(default=None, max_length=15)
+    role: Optional[str] = Field(default="user")
+    password: str = Field(..., min_length=6, max_length=100)
+
+
+class UserLogin(BaseModel):
+    email: str = Field(...)
+    password: str = Field(..., min_length=6, max_length=100)
+
+class UserProfileUpdate(BaseModel):
+    first_name: Optional[str] = Field(default=None, min_length=2, max_length=100)
+    last_name: Optional[str] = Field(default=None, min_length=2, max_length=100)
+    phone_number: Optional[str] = Field(default=None, max_length=15)
+
+
+class UserOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    first_name: str
+    last_name: str
+    email: str
+    phone_number: Optional[str] = None
+    role: str
+    created_at: datetime
+
+
+class UserResponse(BaseModel):
+    success: bool
+    message: str
+    data: UserOut
+
+
+class UserListResponse(BaseModel):
+    success: bool
+    message: str
+    data: list[UserOut]</code></pre></div>
+    <h3>controllers/users.py</h3>
+<div class="code"><div class="code-head"><span class="code-file">controllers/users.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from sqlalchemy.ext.asyncio import AsyncSession
+from schemas.users import UserCreate, UserLogin, UserProfileUpdate
+from sqlalchemy import select
+from models import User
+from fastapi import HTTPException
+from utils.security import hash_password, verify_password
+from uuid import UUID
+from utils.security import create_access_token
+
+
+async def create_user(db: AsyncSession, user_input: UserCreate):
+    # check if email exists
+    existing_email = await db.execute(
+        select(User).where(User.email == user_input.email)
+    )
+
+    if existing_email.scalar_one_or_none() is not None:
+        raise HTTPException(
+            status_code=400,
+            detail="A user with this email already exists"
+        )
+
+    # check if phone_number exists if provided
+    if user_input.phone_number:
+        existing_phone_number = await db.execute(
+            select(User).where(User.phone_number == user_input.phone_number)
+        )
+
+        if existing_phone_number.scalar_one_or_none() is not None:
+            raise HTTPException(
+                status_code=400,
+                detail= "A user with this phonenumber already exists"
+            )
+
+    new_user = User(
+        first_name=user_input.first_name,
+        last_name=user_input.last_name,
+        email=user_input.email,
+        phone_number=user_input.phone_number,
+        password=hash_password(user_input.password),
+        role="user"
+    )
+
+
+    db.add(new_user)
+    await db.flush()
+    await db.refresh(new_user)
+
+    return {"success": True, "message": "Account successfully created", "data": new_user}
+
+
+async def login_user(db: AsyncSession, user_input: UserLogin):
+    # Check if email exists
+    result = await db.execute(
+        select(User).where(User.email == user_input.email)
+    )
+
+    user = result.scalar_one_or_none()
+
+    if user is None:
+        raise HTTPException(
+            status_code=403,
+            detail="This account does not exist. Please register"
+        )
+
+    
+    if not verify_password(user_input.password, user.password):
+        raise HTTPException(
+            status_code=403,
+            detail="Incorrect password"
+        )
+
+    access_token = create_access_token(
+        data={"user_id": str(user.id),"email": user.email,"role": user.role}
+    )
+
+    return {
+        "success": True, 
+        "message": "logged in successfully",
+        "data": {
+            "access_token": access_token,
+            "token_type": "bearer"
+        }
+        }
+
+
+
+async def get_all_users(db: AsyncSession):
+
+    result = await db.execute(
+        select(User)
+    )
+
+    users = result.scalars().all()
+
+    return {"success": True, "message": "users retrieved successfully", "data": users}
+
+async def get_user_by_id(db: AsyncSession, user_id: UUID):
+
+    result = await db.execute(
+        select(User).where(User.id ==user_id)
+    )
+
+    user = result.scalar_one_or_none()
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail= "User not found"
+        )
+
+    return {"success": True, "message": "user retrieved successfully", "data": user}
+
+async def get_me(current_user:User):
+    return {"success": True, "message": "user retrieved successfully", "data": current_user}
+
+
+async def update_me(db: AsyncSession, current_user: User, user_input: UserProfileUpdate):
+    # only the fields the user actually sent (skip missing ones and nulls)
+    update_data = user_input.model_dump(exclude_unset=True, exclude_none=True)
+
+    # phone numbers are unique, so check nobody else has the new one
+    if "phone_number" in update_data:
+        existing_phone_number = await db.execute(
+            select(User).where(
+                User.phone_number == update_data["phone_number"],
+                User.id != current_user.id
+            )
+        )
+
+        if existing_phone_number.scalar_one_or_none() is not None:
+            raise HTTPException(
+                status_code=400,
+                detail="A user with this phonenumber already exists"
+            )
+
+    for key, value in update_data.items():
+        setattr(current_user, key, value)
+
+    await db.flush()
+    await db.refresh(current_user)
+
+    return {"success": True, "message": "profile updated successfully", "data": current_user}</code></pre></div>
+    <h3>routes/users.py</h3>
+<div class="code"><div class="code-head"><span class="code-file">routes/users.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from schemas.users import UserCreate, UserLogin, UserProfileUpdate, UserResponse, UserListResponse
+from controllers.users import create_user, login_user, get_all_users, get_user_by_id, get_me, update_me
+from db import get_db
+from utils.security import get_current_user
+from models import User
+from uuid import UUID
+
+router = APIRouter(prefix="/users")
+
+
+@router.post("/register", response_model=UserResponse)
+async def create_account(user_input: UserCreate, db: AsyncSession = Depends(get_db)):
+    return await create_user(db, user_input)
+
+
+@router.post("/login", response_model=None)
+async def login_account(user_input: UserLogin, db: AsyncSession = Depends(get_db)):
+    return await login_user(db, user_input)
+
+
+@router.get("/", response_model=UserListResponse)
+async def get_all(db: AsyncSession = Depends(get_db)):
+    return await get_all_users(db)
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_logged_in_user(current_user: User = Depends(get_current_user)):
+    return await get_me(current_user)
+
+
+@router.patch("/me", response_model=UserResponse)
+async def update_logged_in_user(
+    user_input: UserProfileUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return await update_me(db, current_user, user_input)
+
+
+@router.get("/{user_id}", response_model=UserResponse)
+async def get(user_id: UUID, db: AsyncSession = Depends(get_db)):
+    return await get_user_by_id(db, user_id)</code></pre></div>
+  </div>
+</details>
+
+<footer>
+  <span>Carona API · Updates and safe responses</span>
+  <span>Next: connecting the frontend to these endpoints</span>
+</footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+/* ---------- syntax highlighting that keeps our line marks ---------- */
+document.querySelectorAll('pre code[data-lang]').forEach(function (el) {
+  var raw = el.textContent;
+  var html = raw;
+  try {
+    if (window.hljs) html = hljs.highlight(raw, { language: el.dataset.lang, ignoreIllegals: true }).value;
+    else html = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  } catch (e) { html = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  var marks = {};
+  (el.dataset.mark || '').split(';').filter(Boolean).forEach(function (part) {
+    var kind = part.split(':')[0], list = part.split(':')[1];
+    list.split(',').forEach(function (r) {
+      var a = r.split('-'), s = +a[0], e = +(a[1] || a[0]);
+      for (var i = s; i <= e; i++) marks[i] = kind;
+    });
+  });
+  // hljs spans never cross newlines for these languages, so a line split is safe
+  var lines = html.split('\n');
+  el.innerHTML = lines.map(function (l, i) {
+    var k = marks[i + 1];
+    return k ? '<span class="hl-' + k + '">' + (l || ' ') + '</span>' : l;
+  }).join('\n');
+});
+
+/* ---------- copy buttons ---------- */
+document.querySelectorAll('.copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var code = btn.closest('.code').querySelector('code');
+    var text = code.textContent;
+    function ok() {
+      btn.textContent = 'Copied';
+      btn.classList.add('done');
+      setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1600);
+    }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(code);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Press Ctrl+C';
+    }
+    try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (e) { fallback(); }
+  });
+});
+
+/* ---------- the route flow ---------- */
+(function () {
+  var X = [70, 310, 550, 790], Y = 110;
+  var STOPS = [
+    { k: 'STOP 1 · SCHEMAS', t: 'Decide what comes in and what goes out',
+      q: 'What can the client change? What must never be sent back?',
+      ex: '<b>For PATCH /users/me</b><span>In: <code>UserProfileUpdate</code>, with first_name, last_name and phone_number, all optional.</span><span>Out: <code>UserResponse</code> with <code>UserOut</code>, so no password.</span>' },
+    { k: 'STOP 2 · LOGIC', t: 'Write the steps in the controller',
+      q: 'Find it, check it, change it, save, return.',
+      ex: '<b>For PATCH /users/me</b><span><code>update_me</code>: keep only the fields that were sent → is the phone number taken? (400) → <code>setattr</code> each field → <code>flush</code> + <code>refresh</code> → return the user.</span>' },
+    { k: 'STOP 3 · ROUTE', t: 'Connect it to a method and a path',
+      q: 'Which method and path? Does it need a login? Which response model?',
+      ex: '<b>For PATCH /users/me</b><span><code>@router.patch("/me", response_model=UserResponse)</code> with <code>Depends(get_current_user)</code>, above <code>/{user_id}</code>.</span>' },
+    { k: 'STOP 4 · TEST', t: 'Try every case in Swagger',
+      q: 'The success case first, then every error you planned.',
+      ex: '<b>For PATCH /users/me</b><span>Change first_name → 200. Use a taken phone number → 400. No token → 401. Is there a password in the body? It should not be there.</span>' }
+  ];
+  var FAIL = {
+    '422': { to: 0, k: 'TEST FAILED · 422', t: 'Back to Schemas',
+      q: 'The request didn\'t match the input schema.',
+      ex: '<b>From the vehicle update</b><span>Sending only <code>{"colour": ...}</code> to PATCH /vehicles gave <em>Field required</em>, because <code>Field(...)</code> made every field required. Fix: <code>Field(default=None)</code>. Then drive the route again: Logic → Route → Test.</span>' },
+    '500': { to: 1, k: 'TEST FAILED · 500', t: 'Back to Logic',
+      q: 'Our code crashed. The terminal shows the traceback.',
+      ex: '<b>From the vehicle update</b><span><code>AttributeError: \'VehicleUpdate\' object has no attribute \'id\'</code>. The controller took its arguments in a different order from the route. Fix the controller, then drive on: Route → Test.</span>' }
+  };
+
+  var car = document.getElementById('car');
+  var panel = document.getElementById('panel');
+  var rings = Array.prototype.slice.call(document.querySelectorAll('.stop-btn .ring'));
+  var chips = { ok: document.getElementById('play-ok'), '422': document.getElementById('play-422'), '500': document.getElementById('play-500') };
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var token = 0;
+
+  function show(i, fail) {
+    var d = fail || STOPS[i];
+    panel.className = 'flow-panel' + (fail ? ' fail' : '');
+    panel.innerHTML = '<span class="k">' + d.k + '</span><h3>' + d.t + '</h3><p class="q">' + d.q + '</p><div class="example">' + d.ex + '</div>';
+    rings.forEach(function (r, j) {
+      var on = fail ? j === 3 : j === i;
+      r.setAttribute('fill', on ? (fail ? 'var(--danger-soft)' : 'var(--brand-soft)') : 'var(--raised)');
+      r.setAttribute('stroke', on && fail ? 'var(--danger)' : 'var(--brand)');
+    });
+  }
+  function place(x, y, flip) { car.setAttribute('transform', 'translate(' + x + ' ' + y + ')' + (flip ? ' scale(-1 1)' : '')); }
+  function loops(which) {
+    ['422', '500'].forEach(function (w) {
+      var v = which === w ? 1 : 0;
+      document.getElementById('back-' + w).setAttribute('opacity', v);
+      document.getElementById('back-' + w + '-lbl').setAttribute('opacity', v);
+    });
+  }
+  function wait(ms, t) { return new Promise(function (res, rej) { setTimeout(function () { t === token ? res() : rej(); }, reduce ? 0 : ms); }); }
+  function drive(from, to, t) {
+    return new Promise(function (res, rej) {
+      if (reduce) { place(X[to], Y); return res(); }
+      var x0 = X[from], x1 = X[to], start = null, dur = Math.abs(x1 - x0) * 2.6;
+      function step(ts) {
+        if (t !== token) return rej();
+        if (!start) start = ts;
+        var p = Math.min(1, (ts - start) / dur), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        place(x0 + (x1 - x0) * e, Y);
+        p < 1 ? requestAnimationFrame(step) : res();
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  function driveBack(pathId, t) {
+    return new Promise(function (res, rej) {
+      var path = document.getElementById(pathId), len = path.getTotalLength();
+      if (reduce) { var e0 = path.getPointAtLength(len); place(e0.x, Y); return res(); }
+      var start = null, dur = len * 2.2;
+      function step(ts) {
+        if (t !== token) return rej();
+        if (!start) start = ts;
+        var p = Math.min(1, (ts - start) / dur), pt = path.getPointAtLength(len * p);
+        place(pt.x, pt.y, true);
+        if (p < 1) requestAnimationFrame(step); else { place(pt.x, Y); res(); }
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  function press(name) { Object.keys(chips).forEach(function (k) { chips[k].setAttribute('aria-pressed', k === name ? 'true' : 'false'); }); }
+
+  function play(name) {
+    var t = ++token; press(name); loops(null);
+    place(X[0], Y); show(0);
+    var p = wait(1500, t);
+    [1, 2, 3].forEach(function (i) {
+      p = p.then(function () { return drive(i - 1, i, t); }).then(function () { show(i); return wait(1600, t); });
+    });
+    if (name !== 'ok') {
+      var f = FAIL[name];
+      p = p.then(function () { show(3, f); loops(name); return wait(1700, t); })
+           .then(function () { return driveBack('back-' + name, t); })
+           .then(function () { show(f.to); return wait(1300, t); })
+           .then(function () { show(f.to, f); });
+    }
+    p.catch(function () {});
+  }
+
+  Object.keys(chips).forEach(function (k) { chips[k].addEventListener('click', function () { play(k); }); });
+  document.querySelectorAll('.stop-btn').forEach(function (g) {
+    function pick() { token++; loops(null); var i = +g.dataset.stop; place(X[i], Y); show(i); }
+    g.addEventListener('click', pick);
+    g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  });
+
+  // complete at rest: show stop 1; start the happy trip once the diagram is on screen
+  show(0);
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function (es) {
+      if (es[0].isIntersecting) { io.disconnect(); play('ok'); }
+    }, { threshold: .5 });
+    io.observe(document.getElementById('flowbox'));
+  }
+})();
+</script>
+
+</body></html>

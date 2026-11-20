@@ -1,0 +1,561 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Carona Domain Brief</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~70ch) with a contents strip; tables and diagrams scroll inside their own boxes. */
+:root {
+  --bg: #f6f7f5;
+  --surface: #ffffff;
+  --fg: #1c2421;
+  --muted: #5b6863;
+  --line: #dde2df;
+  --accent: #0f6b5c;        /* lane green */
+  --accent-soft: #e2f0ec;
+  --marking: #b7791f;       /* road-marking amber, used sparingly */
+  --marking-soft: #fbf1df;
+  --live: #1f7a3f;  --live-soft: #e3f3e8;
+  --plan: #3d5a99;  --plan-soft: #e7ecf7;
+  --bug: #b3261e;   --bug-soft: #fbe9e7;
+  --code-bg: #eef1ef;
+  --f-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121715; --surface: #1a211e; --fg: #e4ebe7; --muted: #9aa8a2; --line: #2c3632;
+    --accent: #5cc4ae; --accent-soft: #1d332d; --marking: #e3a94a; --marking-soft: #352a17;
+    --live: #6fcf8f; --live-soft: #1b3324; --plan: #97b0e8; --plan-soft: #1f2840;
+    --bug: #f08a80; --bug-soft: #3a1f1c; --code-bg: #222a27; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121715; --surface: #1a211e; --fg: #e4ebe7; --muted: #9aa8a2; --line: #2c3632;
+  --accent: #5cc4ae; --accent-soft: #1d332d; --marking: #e3a94a; --marking-soft: #352a17;
+  --live: #6fcf8f; --live-soft: #1b3324; --plan: #97b0e8; --plan-soft: #1f2840;
+  --bug: #f08a80; --bug-soft: #3a1f1c; --code-bg: #222a27; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font: 400 1rem/1.65 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 50rem; margin: 0 auto; padding-block: 3rem 5rem; display: flex; flex-direction: column; gap: 3.5rem; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--accent); }
+code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+.eyebrow { font: 600 0.75rem/1 var(--f-body); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+section { display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
+section > header { display: flex; flex-direction: column; gap: 0.5rem; padding-top: 1.25rem; border-top: 2px dashed var(--line); }
+.lede { font-size: 1.15rem; color: var(--muted); }
+
+/* hero */
+.hero { display: flex; flex-direction: column; gap: 1rem; }
+.route { display: flex; align-items: center; gap: 0.6rem; font: 500 0.85rem var(--f-mono); color: var(--muted); flex-wrap: wrap; }
+.route .dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); }
+.route .dot.end { background: var(--accent); }
+.route .dash { flex: 0 1 4rem; min-width: 1.5rem; border-top: 2px dashed var(--marking); }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.facts div { background: var(--surface); padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.facts dt { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: 0; font-weight: 500; }
+@media (max-width: 640px) { .facts { grid-template-columns: 1fr; } }
+
+/* contents */
+nav.toc { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; font-size: 0.9rem; }
+nav.toc a { color: var(--muted); text-decoration: none; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--accent); text-decoration: underline; }
+
+/* tables */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; vertical-align: top; padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font: 600 0.75rem var(--f-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+td.mono, td .mono { white-space: nowrap; }
+.verb { font: 600 0.72rem var(--f-mono); padding: 0.15em 0.45em; border-radius: 4px; background: var(--code-bg); }
+
+.pill { display: inline-block; font: 600 0.72rem/1 var(--f-body); letter-spacing: 0.04em; padding: 0.35em 0.6em; border-radius: 999px; white-space: nowrap; }
+.pill.live { color: var(--live); background: var(--live-soft); }
+.pill.plan { color: var(--plan); background: var(--plan-soft); }
+.pill.bug { color: var(--bug); background: var(--bug-soft); }
+.pill.prop { color: var(--marking); background: var(--marking-soft); }
+
+/* glossary */
+dl.gloss { display: grid; grid-template-columns: minmax(8rem, max-content) 1fr; gap: 0.6rem 1.25rem; margin: 0; }
+dl.gloss dt { font-weight: 600; }
+dl.gloss dd { margin: 0; color: var(--muted); min-width: 0; }
+@media (max-width: 520px) { dl.gloss { grid-template-columns: 1fr; gap: 0.15rem; } dl.gloss dd { margin-bottom: 0.6rem; } }
+
+/* diagrams */
+.diagram { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; }
+.diagram pre.mermaid { margin: 0; background: transparent; display: flex; justify-content: center; }
+.caption { font-size: 0.85rem; color: var(--muted); }
+
+pre.code { margin: 0; overflow-x: auto; background: var(--code-bg); border-radius: 8px; padding: 0.9rem 1rem; font: 0.83rem/1.55 var(--f-mono); }
+
+.note { border-left: 3px solid var(--marking); background: var(--marking-soft); padding: 0.85rem 1rem; border-radius: 0 8px 8px 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.note strong { font-family: var(--f-display); }
+
+/* decisions */
+.decisions { display: flex; flex-direction: column; gap: 0.9rem; padding: 0; margin: 0; list-style: none; }
+.decisions li { display: flex; flex-direction: column; gap: 0.25rem; }
+.decisions li b { font-family: var(--f-display); font-weight: 600; }
+.decisions li span { color: var(--muted); max-width: 68ch; }
+
+/* journeys */
+.journeys { display: grid; gap: 1.25rem; }
+.journey { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
+.journey ol { margin: 0; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 0.55rem; }
+.journey li { counter-increment: s; display: grid; grid-template-columns: 1.6rem 1fr auto; gap: 0.6rem; align-items: baseline; }
+.journey li::before { content: counter(s); font: 600 0.75rem var(--f-mono); color: var(--accent); text-align: right; }
+.journey li .ep { font: 0.78rem var(--f-mono); color: var(--muted); grid-column: 2 / 4; margin-top: -0.35rem; overflow-wrap: anywhere; }
+@media (max-width: 520px) { .journey li { grid-template-columns: 1.4rem 1fr; } .journey li .pill { grid-column: 2; justify-self: start; } .journey li .ep { grid-column: 2; } }
+
+/* roadmap */
+.road { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.9rem; }
+.stage { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
+.stage .when { font: 600 0.72rem var(--f-mono); color: var(--marking); letter-spacing: 0.06em; text-transform: uppercase; }
+.stage ul { margin: 0; padding-left: 1.05rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.88rem; }
+.stage code { font-size: 0.78em; overflow-wrap: anywhere; }
+@media (max-width: 860px) { .road { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .road { grid-template-columns: 1fr; } }
+
+/* issues */
+.issues { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.issues li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem; display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 0.8rem; }
+.issues li > .pill { grid-row: 1 / 3; align-self: start; }
+.issues .what { font-weight: 600; }
+.issues .why { color: var(--muted); font-size: 0.92rem; }
+.issues .where { font: 0.78rem var(--f-mono); color: var(--muted); }
+
+.questions { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.7rem; }
+.questions li { max-width: 68ch; }
+.questions em { color: var(--muted); font-style: normal; display: block; font-size: 0.92rem; }
+
+footer { color: var(--muted); font-size: 0.85rem; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="route" aria-hidden="true"><span class="dot"></span><span>backend</span><span class="dash"></span><span>domain brief</span><span class="dash"></span><span>design system</span><span class="dash"></span><span>screens</span><span class="dot end"></span></div>
+    <h1>Carona Domain Brief</h1>
+    <p class="lede">What the Carona API already does, what it still needs to do, and the decisions the frontend will rely on. This is phase A of three. The design system and screens come next and build on it.</p>
+    <dl class="facts">
+      <div><dt>Product</dt><dd>Carpooling: drivers offer empty seats on trips they are already making, and passengers book them.</dd></div>
+      <div><dt>Built so far</dt><dd>Accounts, login (JWT), and vehicles. Rides exist only as a database table.</dd></div>
+      <div><dt>Next big piece</dt><dd>Rides API and bookings. Every core screen depends on them.</dd></div>
+    </dl>
+    <nav class="toc" aria-label="Contents">
+      <a href="#people">People and terms</a>
+      <a href="#model">Data model</a>
+      <a href="#api">API today</a>
+      <a href="#contract">Frontend contract</a>
+      <a href="#direction">Where it is heading</a>
+      <a href="#lifecycles">Lifecycles</a>
+      <a href="#journeys">User journeys</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#issues">Known issues</a>
+      <a href="#questions">Open questions</a>
+    </nav>
+  </div>
+
+  <!-- PEOPLE -->
+  <section id="people">
+    <header><span class="eyebrow">Domain</span><h2>People and terms</h2></header>
+    <p>"Carona" is Portuguese for a lift. One account can do both jobs: a person who books a seat on Monday might drive on Friday. So <b>passenger</b> and <b>driver</b> describe what someone is doing, not what kind of account they have.</p>
+    <dl class="gloss">
+      <dt>Passenger</dt><dd>A signed-in user who searches for rides and books seats.</dd>
+      <dt>Driver</dt><dd>A user who has registered at least one vehicle and offers a ride with it.</dd>
+      <dt>Admin</dt><dd>Future role for support and moderation. This is what the <code>role</code> column should be for.</dd>
+      <dt>Vehicle</dt><dd>A car owned by a user: make, model, colour, plate number, and seat capacity. Passengers use the colour and plate to find the car at pickup.</dd>
+      <dt>Ride</dt><dd>One trip a driver offers: origin, destination, departure time, fare, and the vehicle used.</dd>
+      <dt>Booking</dt><dd>A passenger's claim on one or more seats of a ride. Not in the code yet.</dd>
+      <dt>Seats left</dt><dd>Seats offered minus seats in active bookings. Calculated, never stored.</dd>
+      <dt>Fare</dt><dd>The price of a ride. Whether it is per seat or for the whole trip is still open (see the questions at the end).</dd>
+    </dl>
+  </section>
+
+  <!-- MODEL -->
+  <section id="model">
+    <header><span class="eyebrow">As built</span><h2>Data model today</h2></header>
+    <p>Three tables. Every one inherits <code>id</code> (UUID), <code>created_at</code>, <code>updated_at</code> and <code>deleted_at</code> from <code>BaseModel</code> in <code>models/base.py</code>.</p>
+    <div class="diagram">
+<pre class="mermaid">
+erDiagram
+  USER ||--o{ VEHICLE : owns
+  USER ||--o{ RIDE : drives
+  VEHICLE ||--o{ RIDE : "used for"
+  USER {
+    uuid id PK
+    string first_name
+    string last_name
+    string email UK
+    string phone_number UK "optional"
+    string password "bcrypt hash"
+    string role "always user today"
+  }
+  VEHICLE {
+    uuid id PK
+    string make
+    string model
+    string colour
+    int capacity
+    string plate_number
+    uuid owner_id FK
+  }
+  RIDE {
+    uuid id PK
+    uuid driver_id FK
+    uuid vehicle_id FK
+    string origin
+    string destination
+    float distance_km
+    datetime departure_time
+    datetime arrival_time
+    string status "default scheduled"
+    float fare
+  }
+</pre>
+    </div>
+    <p class="caption">Tables are created at startup with <code>create_all</code>. Alembic is in <code>requirements.txt</code> but has no migrations yet, so changing a column means dropping the table during development.</p>
+  </section>
+
+  <!-- API -->
+  <section id="api">
+    <header><span class="eyebrow">As built</span><h2>What the API can do today</h2></header>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Endpoint</th><th>Auth</th><th>Does</th><th>State</th></tr></thead>
+        <tbody>
+          <tr><td class="mono"><span class="verb">GET</span> /health</td><td>No</td><td>Liveness check</td><td><span class="pill live">Works</span></td></tr>
+          <tr><td class="mono"><span class="verb">POST</span> /users/register</td><td>No</td><td>Create an account. Rejects a duplicate email or phone.</td><td><span class="pill live">Works</span></td></tr>
+          <tr><td class="mono"><span class="verb">POST</span> /users/login</td><td>No</td><td>Returns a bearer token valid for 24 hours</td><td><span class="pill live">Works</span></td></tr>
+          <tr><td class="mono"><span class="verb">GET</span> /users/me</td><td>Yes</td><td>The signed-in user</td><td><span class="pill live">Works</span></td></tr>
+          <tr><td class="mono"><span class="verb">GET</span> /users/</td><td>No</td><td>Every user, including password hashes</td><td><span class="pill bug">Unsafe</span></td></tr>
+          <tr><td class="mono"><span class="verb">GET</span> /users/{id}</td><td>No</td><td>One user, including password hash</td><td><span class="pill bug">Unsafe</span></td></tr>
+          <tr><td class="mono"><span class="verb">POST</span> /vehicles/</td><td>Yes</td><td>Register a vehicle to yourself. Rejects a duplicate plate.</td><td><span class="pill live">Works</span></td></tr>
+          <tr><td class="mono"><span class="verb">GET</span> /vehicles/</td><td>Yes</td><td>Your own vehicles</td><td><span class="pill live">Works</span></td></tr>
+          <tr><td class="mono"><span class="verb">GET</span> /vehicles/{id}</td><td>No</td><td>One vehicle</td><td><span class="pill live">Works</span></td></tr>
+          <tr><td class="mono"><span class="verb">PATCH</span> /vehicles/{id}</td><td>Yes</td><td>Edit your own vehicle</td><td><span class="pill bug">Broken</span></td></tr>
+          <tr><td class="mono">/rides/…</td><td>–</td><td>Nothing yet</td><td><span class="pill plan">Planned</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CONTRACT -->
+  <section id="contract">
+    <header><span class="eyebrow">For the frontend</span><h2>Talking to the API</h2></header>
+    <h3>Success: one envelope everywhere</h3>
+    <pre class="code">{
+  "success": true,
+  "message": "vehicles retrieved successfully",
+  "data": [ { "id": "3f2b…", "make": "Toyota", "model": "Corolla", "colour": "Silver",
+              "capacity": 4, "plate_number": "LND-482-KJ", "owner_id": "a91c…",
+              "created_at": "2026-11-02T09:14:22Z", "updated_at": "…", "deleted_at": null } ]
+}</pre>
+    <p>The frontend should read <code>data</code> and can show <code>message</code> as a toast. <code>message</code> is written for developers right now ("vehicle created successfully"), so the UI should keep its own copy for anything a person reads.</p>
+
+    <h3>Errors: two shapes</h3>
+    <p>Errors raised in the controllers have <code>detail</code> as a string. Errors from Pydantic validation (status 422) have <code>detail</code> as a list, one entry per invalid field. The frontend needs one helper that handles both and maps 422 entries onto the matching form fields.</p>
+    <pre class="code">// 400, 401, 403, 404 from HTTPException
+{ "detail": "Vehicle already exists" }
+
+// 422 from request validation
+{ "detail": [ { "type": "string_too_short", "loc": ["body", "make"],
+                "msg": "String should have at least 2 characters", "input": "K" } ] }</pre>
+
+    <h3>Auth</h3>
+    <div class="tbl">
+      <table>
+        <tbody>
+          <tr><td>Sign in</td><td><code>POST /users/login</code> with email and password, then read <code>data.access_token</code>.</td></tr>
+          <tr><td>Each request</td><td>Send the header <code>Authorization: Bearer &lt;token&gt;</code>.</td></tr>
+          <tr><td>Who am I</td><td>Call <code>GET /users/me</code> after login and on app start. Don't rely on decoding the token in the browser.</td></tr>
+          <tr><td>Expiry</td><td>24 hours. There is no refresh token, so the user signs in again.</td></tr>
+          <tr><td>Token rejected</td><td>Expired or invalid tokens return 401 with a readable message. Clear the token and go to sign-in.</td></tr>
+          <tr><td>No token sent</td><td>FastAPI's <code>HTTPBearer</code> rejects the request before our code runs. Confirm the status code against the running server before you rely on it.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><strong>Before any browser can call the API</strong><p>The app has no CORS middleware. A frontend served from another port, for example a Vite dev server on <code>localhost:5173</code>, will have every request blocked by the browser until <code>CORSMiddleware</code> is added in <code>main.py</code>.</p></div>
+  </section>
+
+  <!-- DIRECTION -->
+  <section id="direction">
+    <header><span class="eyebrow">Proposal</span><h2>Where it is heading</h2></header>
+    <p>The API description already promises to "create and manage carpooling rides, view available rides, and join existing rides". Rides cover the first two. Joining needs a <b>Booking</b> table, which does not exist yet. Here is the smallest model that delivers the whole promise. New items are proposals for you to accept or change.</p>
+    <div class="diagram">
+<pre class="mermaid">
+erDiagram
+  USER ||--o{ VEHICLE : owns
+  USER ||--o{ RIDE : "drives"
+  VEHICLE ||--o{ RIDE : "used for"
+  RIDE ||--o{ BOOKING : "has"
+  USER ||--o{ BOOKING : "makes (as passenger)"
+  BOOKING ||--o| RATING : "may get"
+  RIDE {
+    uuid driver_id FK
+    uuid vehicle_id FK
+    string origin
+    string destination
+    datetime departure_time
+    int seats_offered "NEW"
+    float fare "per seat?"
+    string status
+  }
+  BOOKING {
+    uuid id PK "NEW TABLE"
+    uuid ride_id FK
+    uuid passenger_id FK
+    int seats
+    string status
+  }
+  RATING {
+    uuid id PK "LATER"
+    uuid booking_id FK
+    uuid rater_id FK
+    int stars
+    string comment
+  }
+</pre>
+    </div>
+    <h3>Recommended decisions</h3>
+    <ul class="decisions">
+      <li><b>Being a driver is a capability, not a role.</b><span>Anyone who owns a vehicle can offer a ride. Keep <code>role</code> for <code>user</code> and <code>admin</code>. The UI then shows "Offer a ride" to everyone and asks for a vehicle first if they don't have one.</span></li>
+      <li><b>Add <code>seats_offered</code> to Ride.</b><span>A driver may not want to fill every seat. It must be at most the vehicle's capacity (less one if capacity counts the driver). Seats left is <code>seats_offered</code> minus seats in confirmed bookings, calculated when you read it.</span></li>
+      <li><b>Make <code>driver_id</code> and <code>vehicle_id</code> required.</b><span>Both are nullable today, but a ride without a driver or a car can't be shown to passengers. The server should set the driver from the token and check the driver owns the vehicle.</span></li>
+      <li><b>Keep places as free text for version 1.</b><span>Origin and destination stay as strings, for example "Ikeja City Mall". Map coordinates and search by distance can come later without changing the screens much.</span></li>
+      <li><b>Use instant booking for version 1.</b><span>A booking is confirmed straight away if seats are left. Driver approval adds a pending state, notifications and another screen. Leave it for later.</span></li>
+      <li><b>Honour <code>deleted_at</code>.</b><span>The column exists but no query filters on it. Pick soft delete or hard delete now so list screens don't show deleted cars.</span></li>
+    </ul>
+  </section>
+
+  <!-- LIFECYCLES -->
+  <section id="lifecycles">
+    <header><span class="eyebrow">Proposal</span><h2>Ride and booking lifecycles</h2></header>
+    <p>Each state becomes a status badge in the design system, so the list of states needs to be fixed before the colours are.</p>
+    <h3>Ride</h3>
+    <div class="diagram">
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --> scheduled : driver posts ride
+  scheduled --> in_progress : driver starts trip
+  scheduled --> cancelled : driver cancels
+  in_progress --> completed : driver ends trip
+  completed --> [*]
+  cancelled --> [*]
+</pre>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Move</th><th>Who</th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td>scheduled → in_progress</td><td>Driver</td><td>Allowed from a short time before departure, for example 30 minutes</td></tr>
+          <tr><td>scheduled → cancelled</td><td>Driver</td><td>Any time before starting. Every active booking is cancelled too.</td></tr>
+          <tr><td>in_progress → completed</td><td>Driver</td><td>Confirmed bookings become completed and can be rated</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">"Full" is not a state. It is shown when seats left is 0, and the ride stays <code>scheduled</code>.</p>
+
+    <h3>Booking (instant booking)</h3>
+    <div class="diagram">
+<pre class="mermaid">
+stateDiagram-v2
+  direction LR
+  [*] --> confirmed : passenger books, seats available
+  confirmed --> cancelled : passenger cancels, or ride cancelled
+  confirmed --> completed : ride completed
+  completed --> [*]
+  cancelled --> [*]
+</pre>
+    </div>
+  </section>
+
+  <!-- JOURNEYS -->
+  <section id="journeys">
+    <header><span class="eyebrow">Behaviour</span><h2>User journeys</h2></header>
+    <p>Each step shows the endpoint behind it. These steps become the screen list in phase C.</p>
+    <div class="journeys">
+      <div class="journey">
+        <h3>Get started</h3>
+        <ol>
+          <li><span>Create an account</span><span class="pill live">Live</span><span class="ep">POST /users/register</span></li>
+          <li><span>Sign in</span><span class="pill live">Live</span><span class="ep">POST /users/login</span></li>
+          <li><span>Load my profile</span><span class="pill live">Live</span><span class="ep">GET /users/me</span></li>
+        </ol>
+      </div>
+      <div class="journey">
+        <h3>Manage my vehicles</h3>
+        <ol>
+          <li><span>See my vehicles, or an empty state that prompts me to add one</span><span class="pill live">Live</span><span class="ep">GET /vehicles/</span></li>
+          <li><span>Add a vehicle</span><span class="pill live">Live</span><span class="ep">POST /vehicles/</span></li>
+          <li><span>Edit a vehicle</span><span class="pill bug">Broken</span><span class="ep">PATCH /vehicles/{id}</span></li>
+          <li><span>Remove a vehicle</span><span class="pill plan">Planned</span><span class="ep">DELETE /vehicles/{id}</span></li>
+        </ol>
+      </div>
+      <div class="journey">
+        <h3>Find and book a ride (passenger)</h3>
+        <ol>
+          <li><span>Search by origin, destination and date</span><span class="pill plan">Planned</span><span class="ep">GET /rides?origin=…&amp;destination=…&amp;date=…</span></li>
+          <li><span>Compare results: time, fare, seats left, driver</span><span class="pill plan">Planned</span><span class="ep">same response</span></li>
+          <li><span>Open ride details: car colour and plate, driver name</span><span class="pill plan">Planned</span><span class="ep">GET /rides/{id}</span></li>
+          <li><span>Book seats</span><span class="pill plan">Planned</span><span class="ep">POST /rides/{id}/bookings</span></li>
+          <li><span>See it under My trips, or cancel it</span><span class="pill plan">Planned</span><span class="ep">GET /bookings/me · PATCH /bookings/{id}</span></li>
+        </ol>
+      </div>
+      <div class="journey">
+        <h3>Offer a ride (driver)</h3>
+        <ol>
+          <li><span>Pick one of my vehicles, or add one first</span><span class="pill live">Live</span><span class="ep">GET /vehicles/</span></li>
+          <li><span>Enter route, departure time, seats, fare</span><span class="pill plan">Planned</span><span class="ep">POST /rides</span></li>
+          <li><span>See who booked</span><span class="pill plan">Planned</span><span class="ep">GET /rides/{id}/bookings</span></li>
+          <li><span>Start, end or cancel the trip</span><span class="pill plan">Planned</span><span class="ep">PATCH /rides/{id}/status</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="roadmap">
+    <header><span class="eyebrow">Sequence</span><h2>Roadmap</h2></header>
+    <p>Arranged so the student always has a working screen to build against. Each stage unblocks a set of screens.</p>
+    <div class="road">
+      <div class="stage"><span class="when">Now</span><h3>Make it safe to call</h3>
+        <ul><li>Fix vehicle update</li><li>Add response schemas so hashes are never returned</li><li>Add CORS</li><li>Return 401 with one generic message for bad logins</li></ul></div>
+      <div class="stage"><span class="when">Next</span><h3>Rides</h3>
+        <ul><li><code>POST /rides</code></li><li><code>GET /rides</code> search</li><li><code>GET /rides/{id}</code></li><li><code>GET /rides/mine</code></li><li><code>PATCH /rides/{id}/status</code></li></ul></div>
+      <div class="stage"><span class="when">Then</span><h3>Bookings</h3>
+        <ul><li>Booking table</li><li><code>POST /rides/{id}/bookings</code></li><li><code>GET /bookings/me</code></li><li>Cancel booking</li><li>Seats left on ride responses</li></ul></div>
+      <div class="stage"><span class="when">Later</span><h3>Trust and polish</h3>
+        <ul><li>Ratings</li><li>Notifications</li><li>Map coordinates</li><li>Payments</li><li>Admin tools</li><li>Alembic migrations</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ISSUES -->
+  <section id="issues">
+    <header><span class="eyebrow">Checklist</span><h2>Known issues that affect the frontend</h2></header>
+    <p>Found while reading the code. None of them are fixed yet.</p>
+    <ul class="issues">
+      <li><span class="pill bug">Bug</span><span class="what">Vehicle update always fails with a 500</span><span class="why">The route passes <code>user_input</code> and <code>current_user</code> in the wrong order, so the ownership check reads <code>.id</code> from the update form.</span><span class="where">routes/vehicles.py:34</span></li>
+      <li><span class="pill bug">Bug</span><span class="what">Vehicle update requires every field</span><span class="why"><code>Optional[...] = Field(...)</code> still makes the field required, so partial updates are rejected with a 422. <code>capacity</code> is also typed as <code>str</code> instead of <code>int</code>.</span><span class="where">schemas/vehicles.py:12–17</span></li>
+      <li><span class="pill bug">Security</span><span class="what">Password hashes are sent to clients</span><span class="why">Controllers return ORM objects with no response model. <code>GET /users/</code> needs no login and lists every user with their hash.</span><span class="where">controllers/users.py · routes/users.py</span></li>
+      <li><span class="pill bug">Blocker</span><span class="what">No CORS</span><span class="why">A browser on a different origin cannot call the API.</span><span class="where">main.py</span></li>
+      <li><span class="pill prop">Fix</span><span class="what">Login reveals whether an email is registered</span><span class="why">It returns 403 with "This account does not exist" or "Incorrect password". Use 401 and one message, for example "Email or password is incorrect".</span><span class="where">controllers/users.py:60–72</span></li>
+      <li><span class="pill prop">Fix</span><span class="what">Capacity has no limits</span><span class="why">Zero, negative and 500 seats are all accepted. Add bounds, for example <code>ge=1, le=8</code>, so the form and the API agree.</span><span class="where">schemas/vehicles.py:8</span></li>
+      <li><span class="pill prop">Fix</span><span class="what">Soft-deleted rows would still show</span><span class="why">No query filters on <code>deleted_at</code>.</span><span class="where">controllers/*</span></li>
+      <li><span class="pill prop">Tidy</span><span class="what"><code>schemas/___init__.py</code> has three underscores</span><span class="why">It is not a package init file. Imports still work because of namespace packages, but the name will confuse a learner.</span><span class="where">schemas/</span></li>
+    </ul>
+  </section>
+
+  <!-- QUESTIONS -->
+  <section id="questions">
+    <header><span class="eyebrow">Your call</span><h2>Open questions</h2></header>
+    <p>These decide what some screens show. Where I've given a default, the designs will use it unless you say otherwise.</p>
+    <ol class="questions">
+      <li>Does vehicle <code>capacity</code> include the driver's seat?<em>Default: no. Capacity means passenger seats.</em></li>
+      <li>Is <code>fare</code> per seat or for the whole ride, and who sets it?<em>Default: per seat, set by the driver.</em></li>
+      <li>Where does <code>distance_km</code> come from? It is required, but a driver can't be expected to type it.<em>Default: make it optional until maps arrive.</em></li>
+      <li>Instant booking or driver approval?<em>Default: instant for version 1.</em></li>
+      <li>How late can a passenger cancel, and is there a penalty?<em>Default: until departure, no penalty.</em></li>
+      <li>Is payment handled in the app or in cash at pickup?<em>Default: cash. The UI shows the amount but doesn't take payment.</em></li>
+      <li>Which market and currency come first?<em>The sample data uses Lagos places and naira (₦) until you say otherwise.</em></li>
+    </ol>
+  </section>
+
+  <footer>Phase A of 3. Based on <code>main</code> at commit <span class="mono">5a234ed</span>, 10 November 2026.</footer>
+</div>
+
+<!--claude-mermaid-runtime-begin:3477-->
+<style>.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>(function(){
+var CFG={"palettes":{"light":{"surface":"#f4efe4","text":"#42392e","line":"#8a7f6d","border":"#7a6c52","bg":"#fffdf8"},"dark":{"surface":"#262b34","text":"#f2f3f5","line":"#a8adb8","border":"#9aa4b8","bg":"#1f232b"}}};
+if(typeof mermaid==='undefined')return;
+var pres=Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function(p){if(p.hasAttribute('data-claude-mermaid-claimed'))return false;p.setAttribute('data-claude-mermaid-claimed','1');return true;});
+if(!pres.length)return;
+var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
+var root=document.documentElement;
+var items=pres.map(function(pre){
+var mount=document.createElement('div');mount.className='mermaid-diagram';
+return {pre:pre,mount:mount,src:pre.textContent||''};
+});
+var seq=0;
+var renderGen=0;
+var lastKey='';
+function pageBg(fallback){
+var els=[document.body,document.documentElement];
+for(var i=0;i<els.length;i++){
+var c=els[i]&&getComputedStyle(els[i]).backgroundColor;
+if(c&&c!=='transparent'&&c!=='rgba(0, 0, 0, 0)')return c;
+}
+return fallback;
+}
+function render(){
+var theme=root.getAttribute('data-theme');
+var dark=theme==='dark'||(!!(mq&&mq.matches)&&theme!=='light');
+var pal=dark?CFG.palettes.dark:CFG.palettes.light;
+var bg=pageBg(pal.bg);
+var key=(dark?'d':'l')+'|'+bg;
+if(key===lastKey)return;
+lastKey=key;
+var gen=++renderGen;
+var font=getComputedStyle(document.body).fontFamily||'sans-serif';
+var nat={useMaxWidth:false};
+mermaid.initialize({
+startOnLoad:false,securityLevel:'strict',theme:'base',
+flowchart:nat,sequence:nat,er:nat,state:nat,class:nat,pie:nat,
+gantt:nat,journey:nat,timeline:nat,gitGraph:nat,mindmap:nat,xyChart:nat,
+quadrantChart:nat,sankey:nat,c4:nat,requirement:nat,block:nat,
+packet:nat,kanban:nat,architecture:nat,radar:nat,
+themeVariables:{background:bg,mainBkg:pal.surface,primaryColor:pal.surface,
+primaryTextColor:pal.text,lineColor:pal.line,primaryBorderColor:pal.border,
+nodeBorder:pal.border,clusterBorder:pal.border,edgeLabelBackground:bg,
+clusterBkg:'rgba(127,127,127,0.07)',titleColor:pal.text,
+darkMode:dark,rowOdd:bg,rowEven:'rgba(127,127,127,0.07)',
+attributeBackgroundColorOdd:bg,attributeBackgroundColorEven:'rgba(127,127,127,0.07)',
+fontSize:'16px',fontFamily:font},
+themeCSS:'.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }'
+});
+items.forEach(function(it){
+var id='claude-mermaid-'+seq++;
+mermaid.render(id,it.src).then(function(r){
+if(gen!==renderGen)return;
+var prev=it.pre.previousElementSibling;
+if(prev&&prev.className==='mermaid-diagram'&&prev!==it.mount)return;
+it.mount.innerHTML=r.svg;
+if(!it.mount.parentNode)it.pre.parentNode.insertBefore(it.mount,it.pre);
+it.pre.style.display='none';
+},function(){
+var scratch=document.getElementById(id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+scratch=document.getElementById('d'+id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+if(gen!==renderGen)return;
+if(it.mount.parentNode)it.mount.parentNode.removeChild(it.mount);
+it.pre.style.display='';
+});
+});
+}
+render();
+if(mq&&mq.addEventListener)mq.addEventListener('change',render);
+if(typeof MutationObserver!=='undefined')new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+})();</script>
+<!--claude-mermaid-runtime-end-->
+
+</body></html>

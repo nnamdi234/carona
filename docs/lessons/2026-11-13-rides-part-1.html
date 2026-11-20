@@ -1,0 +1,1177 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carona Rides, Part 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: one 760px reading column on the Carona surface; the four lesson parts are
+   stops on a route line, and the endpoint flow is drawn as a ride with four stops. */
+:root {
+  --surface: #f5f6f3;
+  --raised: #ffffff;
+  --sunken: #eceeea;
+  --line: #dde2dd;
+  --line-strong: #7f8a84;
+  --ink: #17201c;
+  --muted: #55625c;
+  --brand: #0b6b58;
+  --brand-strong: #085444;
+  --on-brand: #ffffff;
+  --brand-soft: #dcefe8;
+  --marking: #f2b233;
+  --marking-ink: #835600;
+  --info: #2f5bb7;
+  --info-soft: #e6edfa;
+  --success: #1d7341;
+  --success-soft: #e2f3e8;
+  --warning-soft: #fbf0d9;
+  --danger: #b42318;
+  --danger-soft: #fce8e6;
+  --focus: #2f5bb7;
+  --shadow: 0 1px 2px rgba(16,24,20,.06), 0 4px 12px rgba(16,24,20,.06);
+
+  /* code panel: the same dark editor in both themes */
+  --code-bg: #121a17;
+  --code-head: #1a2420;
+  --code-line: #2c3632;
+  --code-fg: #dfe7e2;
+  --code-dim: #8b9a93;
+  --code-kw: #7ad6c1;
+  --code-str: #f5c45e;
+  --code-fn: #9ab7f5;
+  --code-num: #ff9f92;
+  --code-cls: #8fe0b0;
+  --code-bad: rgba(255, 143, 128, .16);
+  --code-good: rgba(116, 211, 156, .14);
+
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --sans: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #0f1412; --raised: #18201d; --sunken: #222b27; --line: #2c3632; --line-strong: #6e7b75;
+    --ink: #e7ede9; --muted: #a0ada6; --brand: #4cc3a8; --brand-strong: #7ad6c1; --on-brand: #062a22;
+    --brand-soft: #173a31; --marking-ink: #f5c45e; --info: #9ab7f5; --info-soft: #1c2740;
+    --success: #74d39c; --success-soft: #173222; --warning-soft: #352a14; --danger: #ff8f80; --danger-soft: #3b1d1a;
+    --focus: #a9c3ff; --shadow: 0 1px 2px rgba(0,0,0,.5); --code-bg: #0b100e; --code-head: #141c19;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #0f1412; --raised: #18201d; --sunken: #222b27; --line: #2c3632; --line-strong: #6e7b75;
+  --ink: #e7ede9; --muted: #a0ada6; --brand: #4cc3a8; --brand-strong: #7ad6c1; --on-brand: #062a22;
+  --brand-soft: #173a31; --marking-ink: #f5c45e; --info: #9ab7f5; --info-soft: #1c2740;
+  --success: #74d39c; --success-soft: #173222; --warning-soft: #352a14; --danger: #ff8f80; --danger-soft: #3b1d1a;
+  --focus: #a9c3ff; --shadow: 0 1px 2px rgba(0,0,0,.5); --code-bg: #0b100e; --code-head: #141c19;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 96px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; color: var(--ink); }
+p { margin: 0; }
+a { color: var(--brand); font-weight: 600; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+:not(pre) > code {
+  font-family: var(--mono); font-size: .86em; background: var(--sunken); color: var(--ink);
+  padding: 1px 6px; border-radius: 6px; white-space: nowrap;
+}
+strong { font-weight: 700; }
+
+/* ---------- header ---------- */
+.eyebrow {
+  font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand);
+  display: flex; align-items: center; gap: 10px;
+}
+.eyebrow .plate {
+  font-family: var(--mono); letter-spacing: .08em; font-size: 12px; padding: 2px 8px; border-radius: 6px;
+  background: var(--marking); color: #2a1d00; font-weight: 600;
+}
+header.top { display: flex; flex-direction: column; gap: 14px; }
+header.top h1 { font-size: clamp(34px, 6vw, 48px); line-height: 1.05; letter-spacing: -.03em; font-weight: 800; }
+header.top .lede { font-size: 18px; color: var(--muted); max-width: 62ch; }
+
+/* today's route (table of contents) */
+.today { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.today h2 { font-size: 13px; font-family: var(--sans); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stops { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; position: relative; }
+.stops li { position: relative; padding: 0 0 14px 34px; }
+.stops li:last-child { padding-bottom: 0; }
+.stops li::before {
+  content: ""; position: absolute; left: 6px; top: 7px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--raised); border: 3px solid var(--brand);
+}
+.stops li:not(:last-child)::after {
+  content: ""; position: absolute; left: 11px; top: 22px; bottom: -2px; width: 2px;
+  background: repeating-linear-gradient(to bottom, var(--marking) 0 6px, transparent 6px 11px);
+}
+.stops a { color: var(--ink); text-decoration: none; font-weight: 600; }
+.stops a:hover { color: var(--brand); text-decoration: underline; }
+.stops span { display: block; color: var(--muted); font-size: 14px; }
+.stops li.after::before { border-color: var(--line-strong); }
+.stops li.after a { color: var(--muted); }
+
+/* ---------- parts ---------- */
+section.part { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 24px; }
+.part-head { display: flex; flex-direction: column; gap: 8px; padding-bottom: 14px; border-bottom: 2px solid var(--line); }
+.part-num { font-family: var(--mono); font-size: 13px; color: var(--brand); font-weight: 600; letter-spacing: .04em; }
+.part-head h2 { font-size: clamp(26px, 4.5vw, 32px); line-height: 1.15; letter-spacing: -.015em; }
+.endpoint { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--ink); }
+.method { font-size: 11px; font-weight: 600; letter-spacing: .06em; padding: 2px 7px; border-radius: 6px; background: var(--brand-soft); color: var(--brand); }
+.method.patch { background: var(--warning-soft); color: var(--marking-ink); }
+.method.get { background: var(--info-soft); color: var(--info); }
+.endpoints { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+
+h3.step { font-family: var(--sans); font-size: 17px; font-weight: 700; display: flex; gap: 12px; align-items: baseline; margin-top: 10px; }
+h3.step .n {
+  flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--brand); color: var(--on-brand); font-size: 13px; font-family: var(--mono); transform: translateY(-1px);
+}
+h3.step > span:last-child { min-width: 0; }
+.prose { display: flex; flex-direction: column; gap: 12px; max-width: 68ch; }
+ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+
+/* callouts */
+.note { border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+.note .label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.note.why { background: var(--info-soft); }
+.note.why .label { color: var(--info); }
+.note.warn { background: var(--warning-soft); }
+.note.warn .label { color: var(--marking-ink); }
+.note.danger { background: var(--danger-soft); }
+.note.danger .label { color: var(--danger); }
+.note.ok { background: var(--success-soft); }
+.note.ok .label { color: var(--success); }
+
+/* the big rule in part 3 */
+.rule {
+  background: var(--ink); color: var(--surface); border-radius: 16px; padding: 26px 28px;
+  display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden;
+}
+.rule::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px;
+  background: repeating-linear-gradient(90deg, var(--marking) 0 22px, transparent 22px 36px);
+}
+.rule .label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--marking); }
+.rule p.big { font-family: var(--display); font-size: clamp(24px, 4vw, 30px); line-height: 1.15; font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+.rule p.small { color: var(--surface); opacity: .82; max-width: 60ch; }
+
+/* ---------- code ---------- */
+.code { background: var(--code-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--code-line); min-width: 0; }
+.code-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--code-head); border-bottom: 1px solid var(--code-line); padding: 8px 10px 8px 16px;
+}
+.code-file { font-family: var(--mono); font-size: 12.5px; color: var(--code-fg); font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.code-file em { font-style: normal; color: var(--code-dim); }
+.tag { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; margin-right: 8px; }
+.tag.bad { background: #3b1d1a; color: #ff8f80; }
+.tag.good { background: #173222; color: #74d39c; }
+.copy {
+  flex: none; font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--code-fg);
+  background: transparent; border: 1px solid var(--code-line); border-radius: 8px; padding: 5px 12px; cursor: pointer;
+  transition: background 120ms var(--ease), color 120ms var(--ease);
+}
+.copy:hover { background: #24302b; }
+.copy.done { background: #173222; color: #74d39c; border-color: #1d7341; }
+.code pre { margin: 0; padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 13.5px; line-height: 1.7; color: var(--code-fg); tab-size: 4; }
+.code pre code { font-family: inherit; background: none; padding: 0; white-space: pre; display: block; }
+.code .hl-bad { background: var(--code-bad); display: inline-block; min-width: 100%; }
+.code .hl-good { background: var(--code-good); display: inline-block; min-width: 100%; }
+.hljs-keyword, .hljs-built_in.py-kw, .hljs-literal { color: var(--code-kw); }
+.hljs-string { color: var(--code-str); }
+.hljs-title.function_, .hljs-title { color: var(--code-fn); }
+.hljs-title.class_ { color: var(--code-cls); }
+.hljs-number { color: var(--code-num); }
+.hljs-comment { color: var(--code-dim); font-style: italic; }
+.hljs-built_in { color: var(--code-cls); }
+.hljs-meta { color: var(--code-fn); }
+.hljs-attr { color: var(--code-fn); }
+.hljs-params { color: var(--code-fg); }
+.pair { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+/* complete files */
+details.files { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; }
+details.files > summary {
+  cursor: pointer; list-style: none; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  font-weight: 700; font-family: var(--display); font-size: 20px;
+}
+details.files > summary::-webkit-details-marker { display: none; }
+details.files > summary .chev { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--brand); white-space: nowrap; }
+details.files[open] > summary .chev .closed, details.files:not([open]) > summary .chev .open { display: none; }
+details.files .inner { padding: 0 22px 22px; display: flex; flex-direction: column; gap: 18px; }
+details.files h3 { font-family: var(--mono); font-size: 14px; font-weight: 600; }
+
+/* test checklist */
+ol.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; counter-reset: c; }
+ol.checks li {
+  counter-increment: c; background: var(--raised); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 16px 12px 52px; position: relative; font-size: 15px;
+}
+ol.checks li::before {
+  content: counter(c); position: absolute; left: 14px; top: 12px; width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--sunken); color: var(--muted); font-family: var(--mono); font-size: 12px; font-weight: 600;
+}
+.expect { display: inline-block; font-family: var(--mono); font-size: 12px; font-weight: 600; padding: 1px 7px; border-radius: 6px; margin-left: 4px; }
+.expect.s2 { background: var(--success-soft); color: var(--success); }
+.expect.s4 { background: var(--warning-soft); color: var(--marking-ink); }
+
+/* json response comparison */
+.json-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+
+/* ---------- route flow (part 4) ---------- */
+.flow { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.flow-bar { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--line); align-items: center; }
+.flow-bar .lbl { font-size: 13px; font-weight: 600; color: var(--muted); margin-right: 4px; }
+.chip {
+  font-family: var(--sans); font-size: 13px; font-weight: 600; border-radius: 999px; padding: 7px 14px; cursor: pointer;
+  border: 1px solid var(--line-strong); background: var(--raised); color: var(--ink); min-height: 36px;
+  transition: background 120ms var(--ease), color 120ms var(--ease), border-color 120ms var(--ease);
+}
+.chip:hover { border-color: var(--brand); color: var(--brand); }
+.chip[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.chip.bad[aria-pressed="true"] { background: var(--danger); border-color: var(--danger); color: var(--raised); }
+.flow-canvas { overflow-x: auto; padding: 8px 8px 0; }
+.flow svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.flow svg text { font-family: var(--sans); }
+.stop-btn { cursor: pointer; }
+.stop-btn:focus { outline: none; }
+.stop-btn:focus-visible .ring { stroke: var(--focus); stroke-width: 3; }
+.flow-panel { padding: 18px 22px 22px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; min-height: 210px; }
+.flow-panel .k { font-family: var(--mono); font-size: 12px; color: var(--brand); font-weight: 600; letter-spacing: .04em; }
+.flow-panel h3 { font-size: 22px; letter-spacing: -.01em; }
+.flow-panel .q { color: var(--muted); font-size: 15px; }
+.flow-panel .example { background: var(--sunken); border-radius: 10px; padding: 12px 14px; font-size: 14.5px; display: flex; flex-direction: column; gap: 6px; }
+.flow-panel .example b { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.flow-panel.fail .k { color: var(--danger); }
+.flow-panel.fail h3 { color: var(--danger); }
+
+/* recipe cards */
+.recipe { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.recipe article { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.recipe .rk { display: flex; align-items: center; gap: 10px; }
+.recipe .rk .dot { width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; font-family: var(--mono); font-size: 13px; font-weight: 600; flex: none; }
+.recipe h3 { font-size: 19px; }
+.recipe .where { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.recipe ul { margin: 0; padding-left: 18px; font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+.recipe .done { font-size: 14px; border-top: 1px dashed var(--line); padding-top: 10px; color: var(--muted); }
+.recipe .done strong { color: var(--ink); }
+
+/* status code map */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--raised); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; min-width: 520px; }
+th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+th { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--sunken); }
+td.code-cell { font-family: var(--mono); font-weight: 600; white-space: nowrap; }
+td .goto { font-weight: 700; color: var(--brand); white-space: nowrap; }
+
+footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 20px; display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; }
+
+@media (max-width: 520px) {
+  body { font-size: 15.5px; padding-block: 28px 72px; }
+  .wrap { gap: 44px; }
+  .today { padding: 18px; }
+  .flow-panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+<style>
+/* extra pieces for this lesson */
+.method.post { background: var(--brand-soft); color: var(--brand); }
+.time { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--marking-ink); background: var(--warning-soft); padding: 1px 7px; border-radius: 6px; margin-left: 6px; white-space: nowrap; }
+.stops span .time { display: inline; }
+
+/* join diagram */
+.join { background: var(--raised); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.join-tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.jt { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-size: 13.5px; min-width: 0; }
+.jt h4 { margin: 0; padding: 7px 12px; font: 600 12px/18px var(--mono); background: var(--sunken); color: var(--muted); letter-spacing: .04em; }
+.jt dl { margin: 0; padding: 8px 12px; display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; }
+.jt dt { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.jt dd { margin: 0; font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
+.jt .key { color: var(--brand); font-weight: 600; }
+.jt .secret { color: var(--danger); text-decoration: line-through; }
+.join-arrow { text-align: center; font-size: 14px; color: var(--muted); }
+.join-arrow code { white-space: normal !important; }
+
+/* plan for the hour */
+.clock { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.clock div { background: var(--raised); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.clock b { font-family: var(--mono); font-size: 12px; color: var(--marking-ink); }
+.clock span { font-size: 14px; font-weight: 600; }
+.screens { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.screens article { background: var(--raised); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.screens h3 { font-size: 17px; }
+.screens p { font-size: 14px; color: var(--muted); }
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow"><span class="plate">CARONA API</span> Lesson · Rides, part 1</div>
+  <h1>Offer a ride, and let passengers find it</h1>
+  <p class="lede">Rides have had a model since the start but no endpoints. Today a driver can offer a ride in their own car, and anyone can search for rides by place and day. These are the endpoints behind the Offer a ride and Find a ride screens.</p>
+</header>
+
+<div class="clock" aria-label="Plan for the hour">
+  <div><b>0–5</b><span>Merge the phone fix</span></div>
+  <div><b>5–15</b><span>Model + table</span></div>
+  <div><b>15–22</b><span>Schema</span></div>
+  <div><b>22–42</b><span>Logic</span></div>
+  <div><b>42–47</b><span>Route</span></div>
+  <div><b>47–60</b><span>Test</span></div>
+</div>
+
+<nav class="today" aria-label="Today's route">
+  <h2>Today's route</h2>
+  <ol class="stops">
+    <li><a href="#merge">Merge the phone number fix</a><span>One git command</span></li>
+    <li><a href="#model">1. Change the Ride model</a><span>Add seats, make distance optional, recreate the empty table</span></li>
+    <li><a href="#schema">2. Schema: RideCreate</a><span>What a driver sends to offer a ride</span></li>
+    <li><a href="#logic">3. Logic: offer, search, get one</a><span>Four checks, a join, and a search by day</span></li>
+    <li><a href="#route">4. Routes</a><span>POST /rides/, GET /rides/, GET /rides/{ride_id}</span></li>
+    <li><a href="#test">5. Test in Swagger</a><span>Every success and every error</span></li>
+    <li class="after"><a href="#screens">Then: the screens light up</a><span>Offer a ride, Find a ride, results and ride details</span></li>
+  </ol>
+</nav>
+
+<!-- =============================== BEFORE =============================== -->
+<section class="part" id="merge">
+  <div class="part-head">
+    <span class="part-num">BEFORE WE START</span>
+    <h2>Merge the phone number fix</h2>
+    <div class="endpoints"><span class="endpoint"><span class="method patch">PATCH</span>/users/me</span></div>
+  </div>
+  <div class="prose">
+    <p>Last class, sending <code>"phone_number": null</code> to <code>PATCH /users/me</code> didn't remove the number. The fix is on the branch <code>fix/clear-phone-number</code>. Bring it into <code>main</code>:</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">Terminal</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="bash" data-mark="">git checkout main
+git fetch origin
+git merge origin/fix/clear-phone-number</code></pre></div>
+  <div class="prose">
+    <p>Git should say <strong>Fast-forward</strong>: nothing else changed on <code>main</code>, so git just moves <code>main</code> forward to the fix. No merge commit, no conflicts.</p>
+  </div>
+</section>
+
+<!-- =============================== PART 1 =============================== -->
+<section class="part" id="model">
+  <div class="part-head">
+    <span class="part-num">PART 1</span>
+    <h2>Change the Ride model</h2>
+  </div>
+  <div class="prose">
+    <p>Look at the Offer a ride screen: the driver picks a car, types where from and where to, the day and time, how many seats and the fare per seat. Compare that with <code>models/ride.py</code>:</p>
+    <ul class="plain">
+      <li><strong>Seats are missing.</strong> A Corolla has 4 passenger seats, but the driver might only offer 3. We need <code>seats_offered</code>.</li>
+      <li><strong><code>distance_km</code> is required</strong>, but no driver will type the distance into a form. We make it optional (<code>nullable=True</code>). Later the app could work it out from a map.</li>
+    </ul>
+  </div>
+
+  <h3 class="step"><span class="n">a</span><span>Edit the model</span></h3>
+<div class="code"><div class="code-head"><span class="code-file">models/ride.py <em>· whole file, changed lines marked</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="good:2,28,44">from sqlalchemy.orm import mapped_column
+from sqlalchemy import String, Float, DateTime, Integer
+from models.base import BaseModel
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import ForeignKey
+
+
+class Ride(BaseModel):
+
+    __tablename__ = "rides"
+
+    driver_id = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,
+    )
+
+    vehicle_id = mapped_column(
+        UUID(as_uuid=True),                 
+        ForeignKey("vehicles.id", ondelete="CASCADE"),
+        nullable=True
+    )
+
+    origin = mapped_column(String(255), nullable=False)
+
+    destination = mapped_column(String(255), nullable=False)
+
+    distance_km = mapped_column(Float, nullable=True)   
+
+    departure_time =  mapped_column(
+        DateTime(timezone=True),
+        nullable=True,   
+    )      
+
+    arrival_time = mapped_column(       
+        DateTime(timezone=True),
+        nullable=True,   
+    )
+
+    status = mapped_column(String(100), nullable=False, default="scheduled")
+
+    fare = mapped_column(Float, nullable=False)
+    
+    seats_offered = mapped_column(Integer, nullable=False)</code></pre></div>
+
+  <h3 class="step"><span class="n">b</span><span>Recreate the rides table</span></h3>
+  <div class="prose">
+    <p>Our app creates tables with <code>Base.metadata.create_all</code> when it starts. That function only creates tables that <strong>don't exist yet</strong>. It never changes a table that is already there. So the new column won't appear by itself, and inserting a ride would fail because the database doesn't know <code>seats_offered</code>.</p>
+    <p>The <code>rides</code> table is empty (we never had a way to add rides), so the simple fix is to drop it and let the app create it again. Make this file in the project root, run it once, then delete it:</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">drop_rides_table.py <em>· new file, project root</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark=""># Run this ONCE, then delete the file.
+# create_all() only creates tables that are missing. It never changes a table
+# that already exists. The rides table is empty, so we drop it and the app
+# creates it again, with the new columns, the next time it starts.
+import asyncio
+from sqlalchemy import text
+from db import engine
+
+
+async def main():
+    async with engine.begin() as conn:
+        await conn.execute(text("DROP TABLE IF EXISTS rides"))
+    await engine.dispose()
+    print("rides table dropped. Start the app to create it again.")
+
+asyncio.run(main())</code></pre></div>
+<div class="code"><div class="code-head"><span class="code-file">Terminal</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="bash" data-mark="">python drop_rides_table.py</code></pre></div>
+  <div class="note danger">
+    <span class="label">Only because it's empty</span>
+    <p>Dropping a table deletes every row in it. We can do it here because <code>rides</code> has no rows. Never do this to <code>users</code> or <code>vehicles</code>. When a table has real data, we change it with a <strong>migration</strong> instead (a tool called Alembic, already in requirements.txt). That's a lesson of its own.</p>
+  </div>
+</section>
+
+<!-- =============================== PART 2 =============================== -->
+<section class="part" id="schema">
+  <div class="part-head">
+    <span class="part-num">PART 2 · SCHEMAS</span>
+    <h2>RideCreate: what a driver sends</h2>
+    <div class="endpoints"><span class="endpoint"><span class="method post">POST</span>/rides/</span></div>
+  </div>
+  <div class="prose">
+    <p>The driver does <strong>not</strong> send <code>driver_id</code> or <code>status</code>. The token tells us who the driver is, and every new ride starts as <code>"scheduled"</code>. If we let the client send those, anyone could offer a ride in someone else's name.</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">schemas/rides.py <em>· new file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from pydantic import AwareDatetime, BaseModel, Field
+from uuid import UUID
+
+
+class RideCreate(BaseModel):
+    vehicle_id: UUID
+    origin: str = Field(..., min_length=2, max_length=255)
+    destination: str = Field(..., min_length=2, max_length=255)
+    # AwareDatetime means the time must say its timezone, e.g. 2026-11-20T07:30:00+01:00
+    departure_time: AwareDatetime
+    seats_offered: int = Field(..., ge=1)
+    fare: float = Field(..., gt=0)</code></pre></div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Field</th><th>Rule</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><code>vehicle_id</code></td><td><code>UUID</code></td><td>Pydantic rejects anything that isn't a valid id with 422, before our code runs</td></tr>
+        <tr><td><code>departure_time</code></td><td><code>AwareDatetime</code></td><td>The time must include its timezone, like <code>+01:00</code> for Lagos. Without it, 07:30 could mean 07:30 in London or in Lagos.</td></tr>
+        <tr><td><code>seats_offered</code></td><td><code>ge=1</code></td><td>"greater than or equal to 1": you can't offer 0 seats</td></tr>
+        <tr><td><code>fare</code></td><td><code>gt=0</code></td><td>"greater than 0": a ride can't be free or negative</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note why">
+    <span class="label">Reading a time with a timezone</span>
+    <p><code>2026-11-20T07:30:00+01:00</code> means 7:30 on 20 November, one hour ahead of UTC. That's Lagos time. The database stores it in UTC, so the response will show <code>06:30:00+00:00</code>. Same moment, written differently. The frontend turns it back into 7:30 AM.</p>
+  </div>
+</section>
+
+<!-- =============================== PART 3 =============================== -->
+<section class="part" id="logic">
+  <div class="part-head">
+    <span class="part-num">PART 3 · LOGIC</span>
+    <h2>Offer, search and get one ride</h2>
+    <div class="endpoints">
+      <span class="endpoint"><span class="method post">POST</span>/rides/</span>
+      <span class="endpoint"><span class="method get">GET</span>/rides/</span>
+      <span class="endpoint"><span class="method get">GET</span>/rides/{ride_id}</span>
+    </div>
+  </div>
+  <div class="prose">
+    <p>All of this goes in one new file, <code>controllers/rides.py</code>. We'll write it in four pieces.</p>
+  </div>
+
+  <h3 class="step"><span class="n">a</span><span>Imports, Lagos time, and <code>format_ride</code></span></h3>
+  <div class="prose">
+    <p>A passenger looking at a ride wants to see the driver's name and the car, not just <code>driver_id</code> and <code>vehicle_id</code>. So every ride we send back includes a small <code>driver</code> and <code>vehicle</code> inside it.</p>
+    <p>Why build a dict by hand instead of returning the <code>User</code> object? Because the <code>User</code> object has the <strong>password hash</strong>, email and phone number in it. A passenger should see the driver's name and nothing else. <code>format_ride</code> picks exactly what leaves the server.</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py <em>· new file, start here</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from datetime import date, datetime, time, timedelta, timezone
+from uuid import UUID
+
+from fastapi import HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from models import Ride, User, Vehicle
+from schemas.rides import RideCreate
+
+# Lagos is UTC+1 all year (no daylight saving)
+LAGOS = timezone(timedelta(hours=1))
+
+
+def format_ride(ride: Ride, driver: User, vehicle: Vehicle):
+    # Build the ride by hand so we only send what passengers may see:
+    # no password, no email, no phone, no plate number.
+    return {
+        "id": ride.id,
+        "origin": ride.origin,
+        "destination": ride.destination,
+        "departure_time": ride.departure_time,
+        "arrival_time": ride.arrival_time,
+        "fare": ride.fare,
+        "status": ride.status,
+        "seats_offered": ride.seats_offered,
+        "seats_left": ride.seats_offered,  # no bookings yet, so every seat is free
+        "driver": {
+            "id": driver.id,
+            "first_name": driver.first_name,
+            "last_name": driver.last_name,
+        },
+        "vehicle": {
+            "make": vehicle.make,
+            "model": vehicle.model,
+            "colour": vehicle.colour,
+            "capacity": vehicle.capacity,
+        },
+    }</code></pre></div>
+  <div class="note warn">
+    <span class="label">seats_left for now</span>
+    <p>There are no bookings yet, so every offered seat is still free and <code>seats_left</code> equals <code>seats_offered</code>. In part 2 (bookings) we'll subtract the seats people have booked. The frontend already reads <code>seats_left</code>, so it won't need to change.</p>
+  </div>
+
+  <h3 class="step"><span class="n">b</span><span><code>create_ride</code>: four checks, then save</span></h3>
+  <div class="prose">
+    <p>Plain words first: <em>find the car → is it yours? → enough seats? → in the future? → save → return</em>. Each check has its own status code, the same way <code>update_vehicle</code> does it.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Check</th><th>Status</th><th>detail</th></tr></thead>
+      <tbody>
+        <tr><td>No vehicle with that id</td><td class="code-cell">404</td><td><code>Vehicle not found</code></td></tr>
+        <tr><td>The vehicle belongs to someone else</td><td class="code-cell">403</td><td><code>You can only offer rides in your own vehicle</code></td></tr>
+        <tr><td>More seats than the car has</td><td class="code-cell">400</td><td><code>You can't offer more seats than your vehicle has</code></td></tr>
+        <tr><td>The time has already passed</td><td class="code-cell">400</td><td><code>Departure time must be in the future</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py <em>· under format_ride</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">async def create_ride(db: AsyncSession, user_input: RideCreate, current_user: User):
+    # 1. the vehicle must exist
+    result = await db.execute(
+        select(Vehicle).where(Vehicle.id == user_input.vehicle_id)
+    )
+    vehicle = result.scalar_one_or_none()
+
+    if vehicle is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    # 2. ...and belong to the person offering the ride
+    if vehicle.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You can only offer rides in your own vehicle"
+        )
+
+    # 3. you can't offer more seats than the car has
+    if user_input.seats_offered &gt; vehicle.capacity:
+        raise HTTPException(
+            status_code=400,
+            detail="You can't offer more seats than your vehicle has"
+        )
+
+    # 4. the ride must be in the future
+    if user_input.departure_time &lt;= datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=400,
+            detail="Departure time must be in the future"
+        )
+
+    new_ride = Ride(
+        driver_id = current_user.id,
+        vehicle_id = vehicle.id,
+        origin = user_input.origin.strip(),
+        destination = user_input.destination.strip(),
+        departure_time = user_input.departure_time,
+        seats_offered = user_input.seats_offered,
+        fare = user_input.fare,
+        status = "scheduled",
+    )
+
+    db.add(new_ride)
+    await db.flush()
+    await db.refresh(new_ride)
+
+    return {"success": True, "message": "ride created successfully", "data": format_ride(new_ride, current_user, vehicle)}</code></pre></div>
+  <div class="note why">
+    <span class="label">Why the frontend cares about the exact detail text</span>
+    <p>The frontend matches these messages to show the error under the right field. "You can't offer more seats..." shows under <strong>Seats to offer</strong>; "Departure time must be in the future" shows under <strong>Leaving at</strong>. Copy them exactly.</p>
+  </div>
+
+  <h3 class="step"><span class="n">c</span><span><code>search_rides</code>: a join, a filter, a day</span></h3>
+  <div class="prose">
+    <p>This is the new idea today. A ride row only has <code>driver_id</code> and <code>vehicle_id</code>. To show names we need the matching user and vehicle rows too. A <strong>join</strong> asks the database for all three at once, matched up by those ids:</p>
+  </div>
+  <div class="join" aria-label="How the join matches rows">
+    <div class="join-tables">
+      <div class="jt"><h4>rides</h4><dl>
+        <dt>origin</dt><dd>Ikeja City Mall</dd>
+        <dt>driver_id</dt><dd class="key">7f3a…</dd>
+        <dt>vehicle_id</dt><dd class="key">c21e…</dd>
+        <dt>fare</dt><dd>2500</dd></dl></div>
+      <div class="jt"><h4>users</h4><dl>
+        <dt>id</dt><dd class="key">7f3a…</dd>
+        <dt>first_name</dt><dd>Tunde</dd>
+        <dt>email</dt><dd class="secret">tunde@…</dd>
+        <dt>password</dt><dd class="secret">$2b$12$…</dd></dl></div>
+      <div class="jt"><h4>vehicles</h4><dl>
+        <dt>id</dt><dd class="key">c21e…</dd>
+        <dt>make</dt><dd>Toyota</dd>
+        <dt>model</dt><dd>Corolla</dd>
+        <dt>plate_number</dt><dd class="secret">LND 482 KJ</dd></dl></div>
+    </div>
+    <p class="join-arrow"><code>.join(User, Ride.driver_id == User.id)</code> and <code>.join(Vehicle, Ride.vehicle_id == Vehicle.id)</code> give one row per ride: <code>(ride, driver, vehicle)</code>. Then <code>format_ride</code> keeps the green bits and drops the crossed-out ones.</p>
+  </div>
+  <div class="prose">
+    <p>Then we narrow it down. Each filter is only added if the passenger sent it:</p>
+    <ul class="plain">
+      <li><code>ilike(f"%{origin}%")</code>: <em>contains</em>, ignoring capitals. Searching <code>ikeja</code> finds <code>Ikeja City Mall</code> and <code>Ikeja, Allen Avenue</code>.</li>
+      <li><strong>A day in Lagos</strong>: every ride from 00:00 that day up to 00:00 the next day, both in Lagos time. We don't compare dates in UTC, because a ride at 00:30 in Lagos is still the day before in UTC.</li>
+      <li>We always hide rides that already left or aren't <code>scheduled</code>, and sort the earliest first.</li>
+    </ul>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py <em>· under create_ride</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">async def search_rides(db: AsyncSession, origin: str | None, destination: str | None, day: date | None):
+    # Ride + its driver + its vehicle, in one query
+    query = (
+        select(Ride, User, Vehicle)
+        .join(User, Ride.driver_id == User.id)
+        .join(Vehicle, Ride.vehicle_id == Vehicle.id)
+        .where(Ride.status == "scheduled")
+        .where(Ride.departure_time &gt; datetime.now(timezone.utc))
+    )
+
+    # ilike = LIKE that ignores capital letters; % means "anything",
+    # so "ikeja" finds "Ikeja City Mall"
+    if origin:
+        query = query.where(Ride.origin.ilike(f"%{origin.strip()}%"))
+
+    if destination:
+        query = query.where(Ride.destination.ilike(f"%{destination.strip()}%"))
+
+    # a whole day in Lagos time: from 00:00 up to (not including) 00:00 the next day
+    if day:
+        start = datetime.combine(day, time.min, tzinfo=LAGOS)
+        end = start + timedelta(days=1)
+        query = query.where(Ride.departure_time &gt;= start, Ride.departure_time &lt; end)
+
+    query = query.order_by(Ride.departure_time)
+
+    result = await db.execute(query)
+    rides = [format_ride(ride, driver, vehicle) for ride, driver, vehicle in result.all()]
+
+    return {"success": True, "message": "rides retrieved successfully", "data": rides}</code></pre></div>
+
+  <h3 class="step"><span class="n">d</span><span><code>get_ride_by_id</code></span></h3>
+  <div class="prose"><p>The same join, for one ride. <code>one_or_none()</code> gives back the <code>(ride, driver, vehicle)</code> row, or <code>None</code> → 404.</p></div>
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py <em>· bottom of file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">async def get_ride_by_id(db: AsyncSession, ride_id: UUID):
+    result = await db.execute(
+        select(Ride, User, Vehicle)
+        .join(User, Ride.driver_id == User.id)
+        .join(Vehicle, Ride.vehicle_id == Vehicle.id)
+        .where(Ride.id == ride_id)
+    )
+    row = result.one_or_none()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Ride not found"
+        )
+
+    ride, driver, vehicle = row
+    return {"success": True, "message": "ride retrieved successfully", "data": format_ride(ride, driver, vehicle)}</code></pre></div>
+</section>
+
+<!-- =============================== PART 4 =============================== -->
+<section class="part" id="route">
+  <div class="part-head">
+    <span class="part-num">PART 4 · ROUTES</span>
+    <h2>Connect them to paths</h2>
+  </div>
+  <div class="prose">
+    <p>Only offering a ride needs a login. Searching and viewing a ride are open, like a bus timetable. The search filters are <strong>query parameters</strong>: function arguments that aren't in the path and aren't a schema, so FastAPI reads them from <code>?origin=...&amp;day=...</code> in the URL. <code>= None</code> makes each one optional.</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">routes/rides.py <em>· new file</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from datetime import date
+from uuid import UUID
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from controllers.rides import create_ride, get_ride_by_id, search_rides
+from db import get_db
+from models import User
+from schemas.rides import RideCreate
+from utils.security import get_current_user
+
+router = APIRouter(prefix="/rides")
+
+
+@router.post("/", response_model=None)
+async def offer_ride(user_input: RideCreate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await create_ride(db, user_input, current_user)
+
+
+@router.get("/", response_model=None)
+async def search(
+    origin: str | None = None,
+    destination: str | None = None,
+    day: date | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    return await search_rides(db, origin, destination, day)
+
+
+@router.get("/{ride_id}", response_model=None)
+async def get(ride_id: UUID, db: AsyncSession = Depends(get_db)):
+    return await get_ride_by_id(db, ride_id)</code></pre></div>
+  <div class="prose"><p>Then tell the app about the new router:</p></div>
+<div class="code"><div class="code-head"><span class="code-file">main.py <em>· two new lines, marked</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="good:3,7">from routes.users import router as user_router
+from routes.vehicles import router as vehicles_router
+from routes.rides import router as rides_router
+...
+app.include_router(user_router)
+app.include_router(vehicles_router)
+app.include_router(rides_router)</code></pre></div>
+  <div class="note warn">
+    <span class="label">Keep the trailing slash</span>
+    <p>The paths are <code>/rides/</code> with a slash, like <code>/vehicles/</code>. Calling <code>/rides</code> without it makes FastAPI answer with a redirect, and browsers drop the Authorization header on that redirect.</p>
+  </div>
+</section>
+
+<!-- =============================== PART 5 =============================== -->
+<section class="part" id="test">
+  <div class="part-head">
+    <span class="part-num">PART 5 · TEST</span>
+    <h2>Try every case in Swagger</h2>
+  </div>
+  <div class="prose">
+    <p>Restart the server so <code>create_all</code> makes the new <code>rides</code> table, open <code>http://127.0.0.1:8000/docs</code>, log in and click <strong>Authorize</strong>. Call <code>GET /vehicles/</code> and copy one of your vehicle ids.</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">POST /rides/ <em>· request body</em></span><button class="copy" type="button">Copy</button></div><pre><code data-lang="json" data-mark="">{
+  "vehicle_id": "PASTE-YOUR-VEHICLE-ID",
+  "origin": "Ikeja City Mall",
+  "destination": "Victoria Island",
+  "departure_time": "2026-11-20T07:30:00+01:00",
+  "seats_offered": 3,
+  "fare": 2500
+}</code></pre></div>
+  <ol class="checks">
+    <li>Send the body above. <span class="expect s2">200</span> Look at <code>data</code>: there's a <code>driver</code> with only a name, a <code>vehicle</code> with no plate number, and <code>seats_left</code> is 3. Copy the ride <code>id</code>.</li>
+    <li>Change <code>seats_offered</code> to more than your car's <code>capacity</code>. <span class="expect s4">400</span></li>
+    <li>Change the date to yesterday. <span class="expect s4">400</span></li>
+    <li>Take <code>+01:00</code> off the time. <span class="expect s4">422</span> AwareDatetime wants a timezone.</li>
+    <li>Set <code>"fare": 0</code>. <span class="expect s4">422</span></li>
+    <li>Change one character of <code>vehicle_id</code> (keep it a valid UUID). <span class="expect s4">404</span></li>
+    <li>Log in as another user and offer a ride with <em>your</em> vehicle id. <span class="expect s4">403</span></li>
+    <li>Click <strong>Authorize → Logout</strong> and try again. <span class="expect s4">401</span> or <span class="expect s4">403</span></li>
+    <li><code>GET /rides/</code> with <code>origin</code> = <code>ikeja</code>. <span class="expect s2">200</span> Your ride is in the list.</li>
+    <li>Add <code>day</code> = <code>2026-11-20</code>: still there. Change it to <code>2026-11-21</code>: <code>data</code> is <code>[]</code>. <span class="expect s2">200</span> An empty list is not an error.</li>
+    <li><code>GET /rides/{ride_id}</code> with the id from step 1. <span class="expect s2">200</span> Then with a made-up UUID. <span class="expect s4">404</span></li>
+  </ol>
+  <div class="note ok">
+    <span class="label">Then commit</span>
+    <p>Delete <code>drop_rides_table.py</code> first. It has done its job, and nobody should run it by accident later.</p>
+  </div>
+<div class="code"><div class="code-head"><span class="code-file">Terminal</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="bash" data-mark="">git add models/ride.py schemas/rides.py controllers/rides.py routes/rides.py main.py
+git commit -m "feat(rides): offer a ride, search rides and get one ride"</code></pre></div>
+</section>
+
+<!-- =============================== SCREENS =============================== -->
+<section class="part" id="screens">
+  <div class="part-head">
+    <span class="part-num">THEN</span>
+    <h2>The screens light up</h2>
+  </div>
+  <div class="prose">
+    <p>The frontend pages for these endpoints are already built. Start the frontend, sign in, and use the API you just wrote:</p>
+  </div>
+  <div class="screens">
+    <article><h3>Offer a ride</h3><p><code>/offer</code> loads your vehicles with <code>GET /vehicles/</code>, then sends <code>POST /rides/</code>. No vehicle yet? It asks you to add one.</p></article>
+    <article><h3>Find a ride</h3><p><code>/find</code>: From, To and Day. Your last three searches are remembered in the browser.</p></article>
+    <article><h3>Results</h3><p><code>/find/results</code> calls <code>GET /rides/?origin=&amp;destination=&amp;day=</code>. An empty list shows "No rides match".</p></article>
+    <article><h3>Ride details</h3><p><code>/rides/{id}</code> calls <code>GET /rides/{ride_id}</code>. Booking is the next lesson, so the button says "Booking opens soon".</p></article>
+  </div>
+  <div class="prose">
+    <p>Try the 400 from step 2 on the Offer a ride page: the message appears under Seats to offer, in plain words. Next class: <strong>bookings</strong>, so passengers can take those seats and <code>seats_left</code> starts going down.</p>
+  </div>
+</section>
+
+<!-- =============================== FILES =============================== -->
+<details class="files" id="files">
+  <summary>Check your work: complete files <span class="chev"><span class="closed">Show files</span><span class="open">Hide files</span></span></summary>
+  <div class="inner">
+    <h3>models/ride.py</h3>
+<div class="code"><div class="code-head"><span class="code-file">models/ride.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from sqlalchemy.orm import mapped_column
+from sqlalchemy import String, Float, DateTime, Integer
+from models.base import BaseModel
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import ForeignKey
+
+
+class Ride(BaseModel):
+
+    __tablename__ = "rides"
+
+    driver_id = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,
+    )
+
+    vehicle_id = mapped_column(
+        UUID(as_uuid=True),                 
+        ForeignKey("vehicles.id", ondelete="CASCADE"),
+        nullable=True
+    )
+
+    origin = mapped_column(String(255), nullable=False)
+
+    destination = mapped_column(String(255), nullable=False)
+
+    distance_km = mapped_column(Float, nullable=True)   
+
+    departure_time =  mapped_column(
+        DateTime(timezone=True),
+        nullable=True,   
+    )      
+
+    arrival_time = mapped_column(       
+        DateTime(timezone=True),
+        nullable=True,   
+    )
+
+    status = mapped_column(String(100), nullable=False, default="scheduled")
+
+    fare = mapped_column(Float, nullable=False)
+    
+    seats_offered = mapped_column(Integer, nullable=False)</code></pre></div>
+    <h3>schemas/rides.py</h3>
+<div class="code"><div class="code-head"><span class="code-file">schemas/rides.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from pydantic import AwareDatetime, BaseModel, Field
+from uuid import UUID
+
+
+class RideCreate(BaseModel):
+    vehicle_id: UUID
+    origin: str = Field(..., min_length=2, max_length=255)
+    destination: str = Field(..., min_length=2, max_length=255)
+    # AwareDatetime means the time must say its timezone, e.g. 2026-11-20T07:30:00+01:00
+    departure_time: AwareDatetime
+    seats_offered: int = Field(..., ge=1)
+    fare: float = Field(..., gt=0)</code></pre></div>
+    <h3>controllers/rides.py</h3>
+<div class="code"><div class="code-head"><span class="code-file">controllers/rides.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from datetime import date, datetime, time, timedelta, timezone
+from uuid import UUID
+
+from fastapi import HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from models import Ride, User, Vehicle
+from schemas.rides import RideCreate
+
+# Lagos is UTC+1 all year (no daylight saving)
+LAGOS = timezone(timedelta(hours=1))
+
+
+def format_ride(ride: Ride, driver: User, vehicle: Vehicle):
+    # Build the ride by hand so we only send what passengers may see:
+    # no password, no email, no phone, no plate number.
+    return {
+        "id": ride.id,
+        "origin": ride.origin,
+        "destination": ride.destination,
+        "departure_time": ride.departure_time,
+        "arrival_time": ride.arrival_time,
+        "fare": ride.fare,
+        "status": ride.status,
+        "seats_offered": ride.seats_offered,
+        "seats_left": ride.seats_offered,  # no bookings yet, so every seat is free
+        "driver": {
+            "id": driver.id,
+            "first_name": driver.first_name,
+            "last_name": driver.last_name,
+        },
+        "vehicle": {
+            "make": vehicle.make,
+            "model": vehicle.model,
+            "colour": vehicle.colour,
+            "capacity": vehicle.capacity,
+        },
+    }
+
+
+async def create_ride(db: AsyncSession, user_input: RideCreate, current_user: User):
+    # 1. the vehicle must exist
+    result = await db.execute(
+        select(Vehicle).where(Vehicle.id == user_input.vehicle_id)
+    )
+    vehicle = result.scalar_one_or_none()
+
+    if vehicle is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    # 2. ...and belong to the person offering the ride
+    if vehicle.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You can only offer rides in your own vehicle"
+        )
+
+    # 3. you can't offer more seats than the car has
+    if user_input.seats_offered &gt; vehicle.capacity:
+        raise HTTPException(
+            status_code=400,
+            detail="You can't offer more seats than your vehicle has"
+        )
+
+    # 4. the ride must be in the future
+    if user_input.departure_time &lt;= datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=400,
+            detail="Departure time must be in the future"
+        )
+
+    new_ride = Ride(
+        driver_id = current_user.id,
+        vehicle_id = vehicle.id,
+        origin = user_input.origin.strip(),
+        destination = user_input.destination.strip(),
+        departure_time = user_input.departure_time,
+        seats_offered = user_input.seats_offered,
+        fare = user_input.fare,
+        status = "scheduled",
+    )
+
+    db.add(new_ride)
+    await db.flush()
+    await db.refresh(new_ride)
+
+    return {"success": True, "message": "ride created successfully", "data": format_ride(new_ride, current_user, vehicle)}
+
+
+async def search_rides(db: AsyncSession, origin: str | None, destination: str | None, day: date | None):
+    # Ride + its driver + its vehicle, in one query
+    query = (
+        select(Ride, User, Vehicle)
+        .join(User, Ride.driver_id == User.id)
+        .join(Vehicle, Ride.vehicle_id == Vehicle.id)
+        .where(Ride.status == "scheduled")
+        .where(Ride.departure_time &gt; datetime.now(timezone.utc))
+    )
+
+    # ilike = LIKE that ignores capital letters; % means "anything",
+    # so "ikeja" finds "Ikeja City Mall"
+    if origin:
+        query = query.where(Ride.origin.ilike(f"%{origin.strip()}%"))
+
+    if destination:
+        query = query.where(Ride.destination.ilike(f"%{destination.strip()}%"))
+
+    # a whole day in Lagos time: from 00:00 up to (not including) 00:00 the next day
+    if day:
+        start = datetime.combine(day, time.min, tzinfo=LAGOS)
+        end = start + timedelta(days=1)
+        query = query.where(Ride.departure_time &gt;= start, Ride.departure_time &lt; end)
+
+    query = query.order_by(Ride.departure_time)
+
+    result = await db.execute(query)
+    rides = [format_ride(ride, driver, vehicle) for ride, driver, vehicle in result.all()]
+
+    return {"success": True, "message": "rides retrieved successfully", "data": rides}
+
+
+async def get_ride_by_id(db: AsyncSession, ride_id: UUID):
+    result = await db.execute(
+        select(Ride, User, Vehicle)
+        .join(User, Ride.driver_id == User.id)
+        .join(Vehicle, Ride.vehicle_id == Vehicle.id)
+        .where(Ride.id == ride_id)
+    )
+    row = result.one_or_none()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Ride not found"
+        )
+
+    ride, driver, vehicle = row
+    return {"success": True, "message": "ride retrieved successfully", "data": format_ride(ride, driver, vehicle)}</code></pre></div>
+    <h3>routes/rides.py</h3>
+<div class="code"><div class="code-head"><span class="code-file">routes/rides.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">from datetime import date
+from uuid import UUID
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from controllers.rides import create_ride, get_ride_by_id, search_rides
+from db import get_db
+from models import User
+from schemas.rides import RideCreate
+from utils.security import get_current_user
+
+router = APIRouter(prefix="/rides")
+
+
+@router.post("/", response_model=None)
+async def offer_ride(user_input: RideCreate, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await create_ride(db, user_input, current_user)
+
+
+@router.get("/", response_model=None)
+async def search(
+    origin: str | None = None,
+    destination: str | None = None,
+    day: date | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    return await search_rides(db, origin, destination, day)
+
+
+@router.get("/{ride_id}", response_model=None)
+async def get(ride_id: UUID, db: AsyncSession = Depends(get_db)):
+    return await get_ride_by_id(db, ride_id)</code></pre></div>
+    <h3>main.py</h3>
+<div class="code"><div class="code-head"><span class="code-file">main.py</span><button class="copy" type="button">Copy</button></div><pre><code data-lang="python" data-mark="">import os
+from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from routes.users import router as user_router
+from routes.vehicles import router as vehicles_router
+from routes.rides import router as rides_router
+from contextlib import asynccontextmanager
+from db import engine
+from models import Base
+
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    # Perform any cleanup tasks here
+
+app = FastAPI(
+    title="Carona API", 
+    version= "0.1.0",
+    description="API for Carona carpooling service",
+    summary="This API allows users to create and manage carpooling rides, view available rides, and join existing rides.",
+    lifespan=lifespan
+)
+
+# Browsers block a page from calling an API on another address (origin) unless
+# the API says that address is allowed. The allowed frontends come from .env,
+# comma-separated, e.g. CORS_ORIGINS=http://localhost:5173,https://carona.example
+load_dotenv()
+CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip()]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ORIGINS,
+    allow_methods=["*"],
+    allow_headers=["*"],  # the frontend sends Content-Type and Authorization
+)
+
+app.include_router(user_router)
+app.include_router(vehicles_router)
+app.include_router(rides_router)
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}</code></pre></div>
+  </div>
+</details>
+
+<footer>
+  <span>Carona API · Rides, part 1</span>
+  <span>Next: bookings</span>
+</footer>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+/* ---------- syntax highlighting that keeps our line marks ---------- */
+document.querySelectorAll('pre code[data-lang]').forEach(function (el) {
+  var raw = el.textContent;
+  var html = raw;
+  try {
+    if (window.hljs) html = hljs.highlight(raw, { language: el.dataset.lang, ignoreIllegals: true }).value;
+    else html = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  } catch (e) { html = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  var marks = {};
+  (el.dataset.mark || '').split(';').filter(Boolean).forEach(function (part) {
+    var kind = part.split(':')[0], list = part.split(':')[1];
+    list.split(',').forEach(function (r) {
+      var a = r.split('-'), s = +a[0], e = +(a[1] || a[0]);
+      for (var i = s; i <= e; i++) marks[i] = kind;
+    });
+  });
+  // hljs spans never cross newlines for these languages, so a line split is safe
+  var lines = html.split('\n');
+  el.innerHTML = lines.map(function (l, i) {
+    var k = marks[i + 1];
+    return k ? '<span class="hl-' + k + '">' + (l || ' ') + '</span>' : l;
+  }).join('\n');
+});
+
+/* ---------- copy buttons ---------- */
+document.querySelectorAll('.copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var code = btn.closest('.code').querySelector('code');
+    var text = code.textContent;
+    function ok() {
+      btn.textContent = 'Copied';
+      btn.classList.add('done');
+      setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1600);
+    }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(code);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Press Ctrl+C';
+    }
+    try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (e) { fallback(); }
+  });
+});
+
+</script>
+
+</body></html>
