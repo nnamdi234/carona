@@ -32,8 +32,9 @@ schemas/           Pydantic input/output schemas (note: schemas/___init__.py has
 controllers/       the logic; every success returns {"success": True, "message": ..., "data": ...}
 routes/            the routers (routers/ is an empty leftover)
 utils/security.py  bcrypt hashing, JWT creation, get_current_user
-docs/              domain brief and the lesson pages (see below)
 ```
+
+Lesson pages and the domain brief live in the sibling folder `../carona-lessons` (published at https://carona-lessons.web.app).
 
 ## Decisions (the owner's; don't change them without asking)
 
@@ -45,29 +46,30 @@ docs/              domain brief and the lesson pages (see below)
 - Ride responses are built by hand (`format_ride`) so passengers see the driver's name only: never email, phone, password hash or plate number. The plate is shown only after booking.
 - Error `detail` strings are matched by the frontend; keep them exact once written.
 
-## Where things stand (20 Nov 2026)
+## Where things stand (24 Nov 2026)
 
-Done: register, login (JWT, 24 h), `GET /users/me`, `PATCH /users/me` (phone can be cleared with `null`), vehicles CRUD minus delete (`PATCH /vehicles/{id}` fixed), CORS, Ride model with `seats_offered` and nullable `distance_km`, `RideCreate`, `create_ride`.
+Done: register, login (JWT, 24 h), `GET /users/me`, `PATCH /users/me` (phone can be cleared with `null`), vehicles CRUD minus delete (`PATCH /vehicles/{id}` fixed), CORS, Ride model with `seats_offered` and nullable `distance_km`, `RideCreate`, `create_ride` (with `origin` length, `seats_offered` insert, and seat-limit error message fixed in commit `4f64f0c`).
 
-In progress (the "Rides, part 2" lesson, `docs/lessons/2026-11-17-rides-part-2.html`):
-- `routes/rides.py` only has `POST /rides/`, and **`main.py` doesn't include the rides router yet**, so no ride endpoint is reachable. Add `from routes.rides import router as rides_router` and `app.include_router(rides_router)`.
-- `search_rides` (`GET /rides/?origin=&destination=&day=`) and `get_ride_by_id` (`GET /rides/{ride_id}`) are not written yet. The lesson page has the exact code. The frontend already calls all three.
+Next two lessons ready in `../carona-lessons` (https://carona-lessons.web.app):
+- **Rides, part 3** (`2026-11-20-rides-search-and-get.html`): wire `rides_router` in `main.py`, test `POST /rides/`, build `search_rides` (`GET /rides/?origin=&destination=&day=`) and `get_ride_by_id` (`GET /rides/{ride_id}`).
+- **Response shaping and privacy** (`2026-11-24-response-shaping-and-privacy.html`): hide password hashes with `UserOut` + `response_model`, and shape ride responses with `format_ride` + SQL `JOIN`s (unlocking the full Offer → Search → Ride Detail flow in `../carona-frontend`).
 
-Next: bookings (Booking table, `POST /rides/{id}/bookings`, `GET /bookings/me`, cancel, then `seats_left` = `seats_offered` minus booked seats), then `GET /rides/mine`, `PATCH /rides/{id}/status`, `DELETE /vehicles/{id}`. Later: ratings, notifications, maps, payments, admin, Alembic. The full plan is in `docs/domain-brief.html`.
+After that: bookings (Booking table, `POST /rides/{id}/bookings`, `GET /bookings/me`, cancel, then `seats_left` = `seats_offered` minus booked seats), then `GET /rides/mine`, `PATCH /rides/{id}/status`, `DELETE /vehicles/{id}`. Later: ratings, notifications, maps, payments, admin, Alembic. The full plan is in the domain brief (`https://carona-lessons.web.app/domain-brief.html`).
 
 ## Open issues
 
-- **Password hashes are sent to clients.** User routes use `response_model=None` and return the ORM object, so `password` is in every user response, and `GET /users/` needs no login. The fix (`UserOut`, `UserResponse`, `UserListResponse` with `response_model`) is written out in `docs/lessons/2026-11-10-updates-and-userout.html` but hasn't been applied. The owner deliberately left it out of the rides lessons.
+- **Password hashes are sent to clients.** User routes use `response_model=None` and return the ORM object, so `password` is in every user response, and `GET /users/` needs no login. The fix (`UserOut`, `UserResponse`, `UserListResponse` with `response_model`) is covered in the `2026-11-24-response-shaping-and-privacy.html` lesson.
 - `requirements.txt` is missing `bcrypt` and `PyJWT` (installed in `.venv` only).
 - Login returns 403 and says whether the email exists ("This account does not exist" / "Incorrect password"). The design wants 401 and one message: "Email or password is incorrect". (The frontend already shows that one message either way.)
 - Vehicle `capacity` has no bounds (the form allows 1–8).
 - Nothing filters on `deleted_at`.
 - `driver_id` and `vehicle_id` on Ride are nullable; the server sets them, but they should be required.
 
-## docs/
+## Lessons & domain brief
 
-- `docs/domain-brief.html`: the domain brief (glossary, data model, API contract, lifecycles, journeys, roadmap, open questions). Written at commit `5a234ed`, so its "known issues" list is older than the one above.
-- `docs/lessons/`: one HTML page per class, in date order. Each has the exact code for that class, Swagger test steps and the complete files. Open them in a browser.
+- Live site: https://carona-lessons.web.app (Firebase Hosting project `carona-lessons`, source in sibling folder `../carona-lessons/public/`).
+- `../carona-lessons/public/domain-brief.html`: the domain brief (glossary, data model, API contract, lifecycles, journeys, roadmap, open questions). Written at commit `5a234ed`, so its "known issues" list is older than the one above.
+- `../carona-lessons/public/lessons/`: one HTML page per class, in date order. Each has the exact code for that class, Swagger test steps and the complete files. Publish updates from `../carona-lessons` with `npx -y firebase-tools@latest deploy --only hosting`.
 - The designs (21 screens and the design system) live in the frontend: `../carona-frontend/public/design/`.
 
 ## How lessons are made
