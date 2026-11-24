@@ -7,6 +7,37 @@ from datetime import datetime, timezone
 from models.ride import Ride
 
 
+
+def format_ride(ride: Ride, driver: User, vehicle: Vehicle):
+
+    return {
+        "id": ride.id,
+        "origin": ride.origin,
+        "destination": ride.destination,
+        "departure_time": ride.departure_time,
+        "arrival_time": ride.arrival_time,
+        "fare": ride.fare,
+        "status": ride.status,
+        "seats_offered": ride.seats_offered,
+        "seats_left": ride.seats_offered,
+        "driver": {
+            "id": driver.id,
+            "first_name": driver.first_name,
+            "last_name": driver.last_name,
+        },
+        "vehicle": {
+            "make": vehicle.make,
+            "model": vehicle.model,
+            "colour": vehicle.colour,
+            "capacity": vehicle.capacity,
+        }
+    }
+
+
+
+
+
+
 async def create_ride(db: AsyncSession, user_input:RideCreate, current_user:User):
 
     result = await db.execute(
@@ -53,4 +84,6 @@ async def create_ride(db: AsyncSession, user_input:RideCreate, current_user:User
     await db.flush()
     await db.refresh(new_ride)
 
-    return {"success": True, "message": "ride created successfully", "data": new_ride}
+    formatted_ride = format_ride(new_ride, current_user, vehicle)
+
+    return {"success": True, "message": "ride created successfully", "data": formatted_ride}
