@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.users import router as user_router
 from routes.vehicles import router as vehicles_router
+from routes.rides import router as rides_router
 from contextlib import asynccontextmanager
 from db import engine
 from models import Base
@@ -40,6 +41,7 @@ app.add_middleware(
 
 app.include_router(user_router)
 app.include_router(vehicles_router)
+app.include_router(rides_router)
 
 
 @app.get("/health")

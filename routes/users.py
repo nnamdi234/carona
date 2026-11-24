@@ -13,10 +13,11 @@ from models.users import User
 from controllers.users import get_me
 from schemas.users import UserProfileUpdate
 from controllers.users import update_me
+from schemas.users import UserResponse, UserListResponse
 
 router = APIRouter(prefix="/users")
 
-@router.post("/register", response_model=None)
+@router.post("/register", response_model=UserResponse)
 async def create_account(user_input: UserCreate, db: AsyncSession = Depends(get_db)):
     return await create_user(db, user_input)
 
@@ -26,20 +27,20 @@ async def login_account(user_input:UserLogin, db: AsyncSession = Depends(get_db)
     return await login_user(db, user_input)
 
 
-@router.get("/", response_model=None)
+@router.get("/", response_model=UserListResponse)
 async def get_all(db: AsyncSession = Depends(get_db)):
     return await get_all_users(db)
 
-@router.get("/me", response_model=None)
+@router.get("/me", response_model=UserResponse)
 async def get_logged_in_user(current_user: User = Depends(get_current_user)):
     return await get_me(current_user)
 
 
-@router.get("/{user_id}", response_model=None)
+@router.get("/{user_id}", response_model=UserResponse)
 async def get(user_id: UUID, db: AsyncSession = Depends(get_db)):
     return await get_user_by_id(db, user_id)
 
-@router.patch("/me", response_model=None)
+@router.patch("/me", response_model=UserResponse)
 async def update_logged_in_user(
     user_input: UserProfileUpdate,
     db: AsyncSession = Depends(get_db),
