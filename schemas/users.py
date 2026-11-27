@@ -21,6 +21,7 @@ class UserOut(BaseModel):
     phone_number: Optional[str] = None
     role: str
     created_at: datetime
+    updated_at: datetime
 
 class UserResponse(BaseModel):
     success: bool

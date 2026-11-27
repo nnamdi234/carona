@@ -5,6 +5,7 @@ from sqlalchemy import select
 from fastapi import HTTPException
 from datetime import datetime, timezone
 from models.ride import Ride
+from uuid import UUID
 
 
 
@@ -87,3 +88,22 @@ async def create_ride(db: AsyncSession, user_input:RideCreate, current_user:User
     formatted_ride = format_ride(new_ride, current_user, vehicle)
 
     return {"success": True, "message": "ride created successfully", "data": formatted_ride}
+
+
+async def get_ride_by_id(db: AsyncSession, ride_id: UUID):
+    result = await db.execute(
+        select(Ride, User, Vehicle)
+        .join(User, Ride.driver_id == User.id)
+        .join(Vehicle,Ride.vehicle_id == Vehicle.id)
+        .where(Ride.id == ride_id)
+    )
+    row = result.one_or_none()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Ride not found"
+        )
+
+    ride, driver, vehicle = row
+    return {"success": True, "message": "ride retrieved successfully","data":format_ride(ride, driver, vehicle)}
